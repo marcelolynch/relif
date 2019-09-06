@@ -21,3 +21,19 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Idea
+.idea/*
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
+
+# Maven
+target/
+log/
+
+# Include CUP and JFlex .jars
+!/src/main/java/ar/edu/itba/relif/parser/grammar/java-cup-11b.jar
+!/src/main/java/ar/edu/itba/relif/parser/grammar/jflex-full-1.7.0.jar

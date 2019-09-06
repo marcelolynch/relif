@@ -1,0 +1,120 @@
+package ar.edu.itba.relif.parser;
+import ar.edu.itba.relif.parser.ast.*;
+import ar.edu.itba.relif.parser.ast.operator.*;
+import java_cup.runtime.*;
+import java.util.*;
+
+terminal    REL,
+            EQUALS,
+            PLUS,
+            MINUS,
+            COMPOSE,
+            CONVERSE,
+            INTERSECTION,
+            COMMA,
+            IN,
+            NO,
+            SOME,
+            IDEN,
+            UNIV,
+            RUN,
+            NOT,
+            AND,
+            OR,
+            IMPLIES,
+            IFF;
+
+terminal String IDENTIFIER;
+
+non terminal Specification              spec;
+non terminal LinkedList<Statement>      lines;
+non terminal Command                    command;
+non terminal Statement                  line;
+non terminal Declaration                decl;
+non terminal Statement                  fact;
+non terminal LinkedList<String>         identifiers;
+non terminal Formula                    formula;
+non terminal BinaryLogicalOp            bin_logical_op;
+non terminal SetOperator                set_op;
+non terminal MultiplicityFact.Multiplicity   multiplicity_constraint;
+non terminal MultiplicityFact           multiplicity_fact;
+non terminal RelationExpression         rel_expr;
+
+
+precedence left IFF, IMPLIES;
+precedence left OR;
+precedence left AND;
+
+precedence left PLUS, MINUS;
+precedence left INTERSECTION;
+precedence left COMPOSE;
+precedence left CONVERSE;
+
+spec ::= lines:ls command:c {: RESULT = new Specification(ls, c); :}
+        ;
+
+lines ::= line:l {: RESULT = new LinkedList<Statement>(); RESULT.add(l); :}
+            | line:l lines:ls {: RESULT = ls; RESULT.addFirst(l); :}
+            ;
+
+line ::= decl:d {:  RESULT = d; :}
+        | fact:f {: RESULT = f; :}
+        ;
+    
+
+decl ::= REL identifiers:is {: RESULT = new Declaration(is); :}
+     ;
+
+identifiers ::= IDENTIFIER:i {: RESULT = new LinkedList<String>();
+                                RESULT.add(i); :}
+            | IDENTIFIER:i COMMA identifiers:is
+                                {:
+                                    is.addFirst(i);
+                                    RESULT = is;
+                                :}
+            ;
+
+
+fact ::=    formula:f {: RESULT = f; :}
+            | multiplicity_fact:f {: RESULT = f; :}
+            ;
+
+
+formula ::= rel_expr:l set_op:op rel_expr:r {: RESULT = new SetFormula(l,op,r);  :}
+        | NOT formula:f {: RESULT = new NotFormula(f); :}
+        | formula:l bin_logical_op:o formula:r {: RESULT = new BinaryFormula(l,o,r); :}
+        ;
+
+bin_logical_op ::=  AND         {: RESULT = BinaryLogicalOp.AND; :}
+                |   OR          {: RESULT = BinaryLogicalOp.OR;  :}
+                |   IMPLIES     {: RESULT = BinaryLogicalOp.IMPLIES; :}
+                |   IFF         {: RESULT = BinaryLogicalOp.IFF; :}
+                ;
+
+set_op ::=   IN  {: RESULT = SetOperator.IN; :}
+            | EQUALS {: RESULT = SetOperator.EQUALS; :}
+            ;
+
+
+multiplicity_fact ::= multiplicity_constraint:c rel_expr:r {: RESULT = new MultiplicityFact(c, r); :}
+                  ;
+
+
+multiplicity_constraint ::= NO {: RESULT = MultiplicityFact.Multiplicity.NO; :}
+                        |   SOME {: RESULT = MultiplicityFact.Multiplicity.SOME; :}
+                        ;
+
+rel_expr ::= IDEN                                       {: RESULT = Relation.IDEN; :}
+            | UNIV                                      {: RESULT = Relation.UNIV; :}
+            | IDENTIFIER:i                              {: RESULT = new Relation(i); :}
+            | rel_expr:r1 PLUS rel_expr:r2              {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.PLUS, r2); :}
+            | rel_expr:r1 MINUS rel_expr:r2             {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.MINUS, r2); :}
+            | rel_expr:r1 COMPOSE rel_expr:r2           {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.COMPOSE, r2); :}
+            | rel_expr:r1 INTERSECTION rel_expr:r2      {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.INTERSECTION, r2); :}
+            | CONVERSE rel_expr:r                       {: RESULT = new UnaryRelationExpr(UnaryRelationOp.CONVERSE, r); :}
+            ;
+
+
+
+command ::= RUN {: RESULT = new Command("run"); :}
+;
