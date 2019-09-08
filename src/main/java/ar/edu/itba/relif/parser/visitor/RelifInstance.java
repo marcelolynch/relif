@@ -142,14 +142,11 @@ public class RelifInstance {
 
     private kodkod.ast.Formula axiom1() {
         // Ax. 1: X = X;1'
-        // x = x;y for some y identity atom
-        // y.(x.cycles) = x
-        // { all x: At | some i: Ids | x = cycle[x,i] }
+        // x = x;1' for all atoms
+        // { all x: At | x = cycle[x,Ids] }
 
         Variable x1 = Variable.unary("x");
-        Variable y1 = Variable.unary("y");
-        return apply(cycles, x1, y1).eq(x1)
-                .forSome(y1.oneOf(identity))
+        return apply(cycles, x1, identity).eq(x1)
                 .forAll(x1.oneOf(atoms));
     }
 

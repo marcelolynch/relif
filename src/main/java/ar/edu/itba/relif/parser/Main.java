@@ -37,7 +37,7 @@ public class Main {
 
     public static void solve(Specification spec) {
 
-        RelifInstance rif = new RelifInstance(1, 0, 2);
+        RelifInstance rif = new RelifInstance(2, 0, 2);
         ToKodkod visitor = new ToKodkod(rif);
         Formula specification = visitor.visit(spec);
 
