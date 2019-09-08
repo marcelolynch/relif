@@ -22,7 +22,9 @@ terminal    REL,
             AND,
             OR,
             IMPLIES,
-            IFF;
+            IFF,
+            OPENPAREN,
+            CLOSEPAREN;
 
 terminal String IDENTIFIER;
 
@@ -83,6 +85,7 @@ fact ::=    formula:f {: RESULT = f; :}
 formula ::= rel_expr:l set_op:op rel_expr:r {: RESULT = new SetFormula(l,op,r);  :}
         | NOT formula:f {: RESULT = new NotFormula(f); :}
         | formula:l bin_logical_op:o formula:r {: RESULT = new BinaryFormula(l,o,r); :}
+        | OPENPAREN formula:f CLOSEPAREN {: RESULT = f; :}
         ;
 
 bin_logical_op ::=  AND         {: RESULT = BinaryLogicalOp.AND; :}
@@ -104,14 +107,15 @@ multiplicity_constraint ::= NO {: RESULT = MultiplicityFact.Multiplicity.NO; :}
                         |   SOME {: RESULT = MultiplicityFact.Multiplicity.SOME; :}
                         ;
 
-rel_expr ::= IDEN                                       {: RESULT = Relation.IDEN; :}
-            | UNIV                                      {: RESULT = Relation.UNIV; :}
-            | IDENTIFIER:i                              {: RESULT = new Relation(i); :}
+rel_expr ::= IDEN                                       {: RESULT = Rel.IDEN; :}
+            | UNIV                                      {: RESULT = Rel.UNIV; :}
+            | IDENTIFIER:i                              {: RESULT = new Rel(i); :}
             | rel_expr:r1 PLUS rel_expr:r2              {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.PLUS, r2); :}
             | rel_expr:r1 MINUS rel_expr:r2             {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.MINUS, r2); :}
             | rel_expr:r1 COMPOSE rel_expr:r2           {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.COMPOSE, r2); :}
             | rel_expr:r1 INTERSECTION rel_expr:r2      {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.INTERSECTION, r2); :}
             | CONVERSE rel_expr:r                       {: RESULT = new UnaryRelationExpr(UnaryRelationOp.CONVERSE, r); :}
+            | OPENPAREN rel_expr:r CLOSEPAREN           {: RESULT = r; :}
             ;
 
 

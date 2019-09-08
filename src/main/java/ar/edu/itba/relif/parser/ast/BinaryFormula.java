@@ -1,6 +1,7 @@
 package ar.edu.itba.relif.parser.ast;
 
 import ar.edu.itba.relif.parser.ast.operator.BinaryLogicalOp;
+import ar.edu.itba.relif.parser.visitor.ReturnVisitor;
 import ar.edu.itba.relif.parser.visitor.Visitor;
 
 public class BinaryFormula extends Formula {
@@ -30,5 +31,10 @@ public class BinaryFormula extends Formula {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public <F, E> Object accept(ReturnVisitor<F, E> visitor) {
+        return visitor.visit(this);
     }
 }

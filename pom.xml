@@ -38,5 +38,11 @@
 			<artifactId>java-cup</artifactId>
 			<version>11b-20160615</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.sat4j</groupId>
+			<artifactId>org.sat4j.core</artifactId>
+			<version>2.3.1</version>
+		</dependency>
 	</dependencies>
 </project>

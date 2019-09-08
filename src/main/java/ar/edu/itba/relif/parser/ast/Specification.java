@@ -1,5 +1,6 @@
 package ar.edu.itba.relif.parser.ast;
 
+import ar.edu.itba.relif.parser.visitor.ReturnVisitor;
 import ar.edu.itba.relif.parser.visitor.Visitor;
 
 import java.util.List;
@@ -24,5 +25,10 @@ public class Specification implements AstNode {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public <F, E> Object accept(ReturnVisitor<F, E> visitor) {
+        return visitor.visit(this);
     }
 }

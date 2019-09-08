@@ -42,8 +42,8 @@ public class PrintVisitor implements Visitor {
     }
 
     @Override
-    public void visit(Relation relation) {
-        System.out.print(relation.getName());
+    public void visit(Rel rel) {
+        System.out.print(rel.getName());
     }
 
     @Override

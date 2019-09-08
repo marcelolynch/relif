@@ -1,3 +1,6 @@
 package ar.edu.itba.relif.parser.ast;
 
-public abstract class Statement implements AstNode{}
+import ar.edu.itba.relif.parser.visitor.ToKodkod;
+
+public abstract class Statement implements AstNode{
+}

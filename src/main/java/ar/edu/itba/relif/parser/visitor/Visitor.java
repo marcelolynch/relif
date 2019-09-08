@@ -9,7 +9,7 @@ public interface Visitor {
     void visit(Declaration d);
     void visit(MultiplicityFact f);
     void visit(BinaryFormula bf);
-    void visit(Relation relation);
+    void visit(Rel rel);
     void visit(BinaryRelationExpr binaryRelationExpr);
     void visit(UnaryRelationExpr unaryRelationExpr);
     void visit(NotFormula notFormula);

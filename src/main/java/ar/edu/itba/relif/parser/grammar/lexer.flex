@@ -39,6 +39,9 @@ newline = \r|\n|\r\n
 "iden" { return symbol(yytext(), sym.IDEN); }
 "univ" { return symbol(yytext(), sym.UNIV); }
 
+"(" { return symbol(yytext(), sym.OPENPAREN); }
+")" { return symbol(yytext(), sym.CLOSEPAREN); }
+
 "rel" { return symbol(yytext(), sym.REL); }
 "," { return symbol(yytext(), sym.COMMA); }
 

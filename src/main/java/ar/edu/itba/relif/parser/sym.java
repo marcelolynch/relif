@@ -8,14 +8,16 @@ package ar.edu.itba.relif.parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
+  public static final int CLOSEPAREN = 22;
   public static final int AND = 17;
+  public static final int OPENPAREN = 21;
   public static final int PLUS = 4;
   public static final int OR = 18;
   public static final int IN = 10;
   public static final int REL = 2;
   public static final int NOT = 16;
   public static final int CONVERSE = 7;
-  public static final int IDENTIFIER = 21;
+  public static final int IDENTIFIER = 23;
   public static final int IDEN = 13;
   public static final int IMPLIES = 19;
   public static final int EQUALS = 3;
@@ -52,6 +54,8 @@ public class sym {
   "OR",
   "IMPLIES",
   "IFF",
+  "OPENPAREN",
+  "CLOSEPAREN",
   "IDENTIFIER"
   };
 }
