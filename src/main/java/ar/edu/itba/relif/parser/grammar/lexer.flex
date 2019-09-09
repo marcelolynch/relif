@@ -15,7 +15,7 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 	public Symbol symbol(String plaintext,int code){
 	    return sf.newSymbol(plaintext, code, new Location("",yyline+1, yycolumn +1,yychar), new Location("",yyline+1,yycolumn+yylength(),yychar));
 	}
-	public Symbol symbol(String plaintext,int code, String value){
+	public Symbol symbol(String plaintext,int code, Object value){
 	    return sf.newSymbol(plaintext,code,new Location("",yyline+1, yycolumn +1,yychar), new Location("",yyline+1,yycolumn+yylength(),yychar), value);
 	}
 	private ComplexSymbolFactory sf;
@@ -38,6 +38,7 @@ newline = \r|\n|\r\n
 
 "iden" { return symbol(yytext(), sym.IDEN); }
 "univ" { return symbol(yytext(), sym.UNIV); }
+"for" { return symbol(yytext(), sym.FOR); }
 
 "(" { return symbol(yytext(), sym.OPENPAREN); }
 ")" { return symbol(yytext(), sym.CLOSEPAREN); }
@@ -69,8 +70,14 @@ newline = \r|\n|\r\n
 "iff" { return symbol(yytext(), sym.IFF); }
 
 
+
 "run" { return symbol(yytext(), sym.RUN); }
+"id" { return symbol(yytext(), sym.IDENTITY); }
+"sym" { return symbol(yytext(), sym.SYMMETRIC); }
+"asym" { return symbol(yytext(), sym.ASYMMETRIC); }
+"but" { return symbol(yytext(), sym.BUT); }
+"default" { return symbol(yytext(), sym.DEFAULT); }
+
 
 {ident} { String s = yytext(); return symbol(s, sym.IDENTIFIER, s); }
-
-
+{number} { String s = yytext(); return symbol(s, sym.NUMBER, Integer.parseInt(s)); }

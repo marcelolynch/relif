@@ -1,6 +1,7 @@
 package ar.edu.itba.relif.parser.visitor;
 
 
+import ar.edu.itba.relif.parser.ast.Scope;
 import kodkod.ast.Expression;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
@@ -34,7 +35,11 @@ public class RelifInstance {
     private final kodkod.ast.Formula requirements;
     private final TupleSet allAtomsTupleSet;
 
-    public RelifInstance(int ids, int syms, int asyms) {
+    public RelifInstance(Scope scope) {
+        int ids = scope.getIdentities();
+        int syms = scope.getSymmetrics();
+        int asyms = scope.getAsymmetrics();
+
         asyms = 2 * (asyms/2); // Asymmetric atoms are even
         identityAtoms = IntStream.range(0, ids).mapToObj(i -> "I" + i).collect(Collectors.toList());
         asymmetricAtoms = IntStream.range(0, asyms).mapToObj(i -> "A" + i).collect(Collectors.toList());

@@ -4,6 +4,71 @@ import ar.edu.itba.relif.parser.ast.operator.*;
 import java_cup.runtime.*;
 import java.util.*;
 
+
+parser code {:
+    static class ScopeBuilder {
+        int identities, symmetrics, asymmetrics;
+        boolean doneId, doneSym, doneAsym;
+
+        public ScopeBuilder() {
+            identities = Scope.DEFAULT.getIdentities();
+            symmetrics = Scope.DEFAULT.getSymmetrics();
+            asymmetrics = Scope.DEFAULT.getAsymmetrics();
+        }
+
+        public ScopeBuilder setDefaults(int i) {
+            if(!doneId) {
+                identities = i;
+            }
+            if(!doneSym) {
+                  symmetrics = i;
+            }
+
+            if(!doneAsym) {
+                 asymmetrics = i;
+            }
+            return this;
+        }
+        public ScopeBuilder identities(int i) {
+            if (doneId) { throw new IllegalStateException("Did id"); }
+            doneId = true;
+            identities = i;
+            return this;
+        }
+
+        public ScopeBuilder symmetrics(int i) {
+                    if (doneSym) { throw new IllegalStateException("Did sym"); }
+                    doneSym = true;
+                    symmetrics = i;
+                    return this;
+                }
+
+        public ScopeBuilder asymmetrics(int i) {
+                            if (doneAsym) { throw new IllegalStateException("Did asym"); }
+                            doneAsym = true;
+                            asymmetrics = i;
+                            return this;
+                        }
+
+        public ScopeBuilder set(int type, int i) {
+            if (type == 0) {
+                 return identities(i);
+            } else if (type == 1) {
+                return symmetrics(i);
+            } else if (type == 2) {
+                return asymmetrics(i);
+            }
+
+            throw new IllegalStateException("Unreachable");
+
+        }
+        public Scope build() {
+            return new Scope(identities, symmetrics, asymmetrics);
+        }
+
+    }
+:}
+
 terminal    REL,
             EQUALS,
             PLUS,
@@ -24,9 +89,17 @@ terminal    REL,
             IMPLIES,
             IFF,
             OPENPAREN,
-            CLOSEPAREN;
+            CLOSEPAREN,
+            NEWLINE,
+            FOR,
+            SYMMETRIC,
+            IDENTITY,
+            ASYMMETRIC,
+            DEFAULT,
+            BUT;
 
 terminal String IDENTIFIER;
+terminal Integer NUMBER;
 
 non terminal Specification              spec;
 non terminal LinkedList<Statement>      lines;
@@ -41,7 +114,8 @@ non terminal SetOperator                set_op;
 non terminal MultiplicityFact.Multiplicity   multiplicity_constraint;
 non terminal MultiplicityFact           multiplicity_fact;
 non terminal RelationExpression         rel_expr;
-
+non terminal ScopeBuilder               scope;
+non terminal Integer                    scope_type;
 
 precedence left IFF, IMPLIES;
 precedence left OR;
@@ -120,5 +194,18 @@ rel_expr ::= IDEN                                       {: RESULT = Rel.IDEN; :}
 
 
 
-command ::= RUN {: RESULT = new Command("run"); :}
-;
+command ::= RUN {: RESULT = new Command("run", Scope.DEFAULT); :}
+            | RUN FOR scope:sb {: RESULT = new Command("run", sb.build()); :}
+            | RUN FOR NUMBER:i BUT scope:sb {: RESULT = new Command("run", sb.setDefaults(i).build()); :}
+            | RUN FOR DEFAULT BUT scope:sb {: RESULT = new Command("run", sb.build()); :}
+            ;
+
+
+scope ::= NUMBER:i scope_type:t {: RESULT = new ScopeBuilder().set(t,i); :}
+          | NUMBER:i scope_type:t COMMA scope:sb {: RESULT = sb.set(t,i); :}
+          ;
+
+scope_type ::= IDENTITY     {: RESULT = 0; :}
+            |  SYMMETRIC    {: RESULT = 1; :}
+            |  ASYMMETRIC   {: RESULT = 2; :}
+            ;

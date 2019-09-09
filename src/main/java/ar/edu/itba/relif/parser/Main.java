@@ -25,7 +25,7 @@ public class Main {
                 "R + ~R = univ\n" +
                 "iden = ((R - iden).~(R - iden) & iden)\n" +
                 "iden = (~(R - iden).(R - iden) & iden)\n" +
-                "run");
+                "run for default but 2 id");
         ComplexSymbolFactory sf = new ComplexSymbolFactory();
         parser parser = new parser(new Scanner(reader, sf), sf);
         Symbol result = parser.parse();
@@ -37,7 +37,7 @@ public class Main {
 
     public static void solve(Specification spec) {
 
-        RelifInstance rif = new RelifInstance(2, 0, 2);
+        RelifInstance rif = new RelifInstance(spec.getCommand().getScope());
         ToKodkod visitor = new ToKodkod(rif);
         Formula specification = visitor.visit(spec);
 

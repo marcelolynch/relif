@@ -4,10 +4,13 @@ import ar.edu.itba.relif.parser.visitor.ReturnVisitor;
 import ar.edu.itba.relif.parser.visitor.Visitor;
 
 public class Command implements AstNode {
+    private final Scope scope;
+
     String command;
 
-    public Command(String command) {
+    public Command(String command, Scope scope) {
         this.command = command;
+        this.scope = scope;
     }
 
     @Override
@@ -15,6 +18,14 @@ public class Command implements AstNode {
         return "Command{" +
                 "command='" + command + '\'' +
                 '}';
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public String getCommand() {
+        return command;
     }
 
     @Override
