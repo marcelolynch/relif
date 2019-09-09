@@ -83,6 +83,7 @@ terminal    REL,
             IDEN,
             UNIV,
             RUN,
+            CHECK,
             NOT,
             AND,
             OR,
@@ -96,7 +97,9 @@ terminal    REL,
             IDENTITY,
             ASYMMETRIC,
             DEFAULT,
-            BUT;
+            BUT,
+            LBRACKET,
+            RBRACKET;
 
 terminal String IDENTIFIER;
 terminal Integer NUMBER;
@@ -116,6 +119,8 @@ non terminal MultiplicityFact           multiplicity_fact;
 non terminal RelationExpression         rel_expr;
 non terminal ScopeBuilder               scope;
 non terminal Integer                    scope_type;
+non terminal CommandType                command_type;
+non terminal Optional<Statement>        command_target;
 
 precedence left IFF, IMPLIES;
 precedence left OR;
@@ -194,11 +199,20 @@ rel_expr ::= IDEN                                       {: RESULT = Rel.IDEN; :}
 
 
 
-command ::= RUN {: RESULT = new Command("run", Scope.DEFAULT); :}
-            | RUN FOR scope:sb {: RESULT = new Command("run", sb.build()); :}
-            | RUN FOR NUMBER:i BUT scope:sb {: RESULT = new Command("run", sb.setDefaults(i).build()); :}
-            | RUN FOR DEFAULT BUT scope:sb {: RESULT = new Command("run", sb.build()); :}
+command ::= command_type:t command_target:ct {: RESULT = new Command(t, ct, Scope.DEFAULT); :}
+            | command_type:t command_target:ct FOR scope:sb {: RESULT = new Command(t, ct, sb.build()); :}
+            | command_type:t command_target:ct FOR NUMBER:i {: RESULT = new Command(t, ct, new ScopeBuilder().setDefaults(i).build()); :}
+            | command_type:t command_target:ct FOR NUMBER:i BUT scope:sb {: RESULT = new Command(t, ct, sb.setDefaults(i).build()); :}
+            | command_type:t command_target:ct FOR DEFAULT BUT scope:sb {: RESULT = new Command(t, ct, sb.build()); :}
             ;
+
+command_target ::= LBRACKET fact:f RBRACKET {: RESULT = Optional.of(f); :}
+                | LBRACKET RBRACKET {: RESULT = Optional.empty(); :}
+                ;
+
+command_type ::= RUN {: RESULT = CommandType.RUN; :}
+             |   CHECK {: RESULT = CommandType.CHECK; :}
+             ;
 
 
 scope ::= NUMBER:i scope_type:t {: RESULT = new ScopeBuilder().set(t,i); :}

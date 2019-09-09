@@ -4,8 +4,8 @@ import ar.edu.itba.relif.parser.ast.*;
 
 public interface ReturnVisitor<F,E> {
     F visit(Specification s);
-    Void visit(Command c);
-    Void visit(Declaration d);
+    F visit(Command c);
+    F visit(Declaration d);
     F visit(MultiplicityFact f);
     F visit(BinaryFormula bf);
     E visit(Rel rel);

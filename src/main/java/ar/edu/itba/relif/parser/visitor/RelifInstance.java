@@ -62,7 +62,10 @@ public class RelifInstance {
         allAtomsTupleSet = factory.setOf(allAtoms.toArray());
 
 
-        bounds.bound(identity, factory.setOf(identityAtoms.toArray()));
+        // Set the lower bound with the first identity atom -- Id can't be empty,
+        // so we just force some identity atom to be in the relation (i.e., the first one)
+        bounds.bound(identity, factory.setOf(identityAtoms.get(0)), factory.setOf(identityAtoms.toArray()));
+
         bounds.bound(symmetric, factory.setOf(symmetricAtoms.toArray()));
         bounds.bound(asymmetric, factory.setOf(asymmetricAtoms.toArray()));
         bounds.bound(atoms, allAtomsTupleSet);
@@ -79,11 +82,9 @@ public class RelifInstance {
         // Bound cycles
         bounds.bound(cycles, cyclesBounds(factory));
 
+        AxiomProvider axiomProvider = new AxiomProvider2(atoms, cycles, converse, identity);
         // Build the formula that ensures we're modelling relation algebras
-        requirements = axiom1()
-                        .and(axiom2())
-                        .and(axiom3())
-                        .and(axiom4())
+        requirements =  axiomProvider.getAxioms()
                         .and(universeRequirements())
                         .and(converseRequirements())
                         .and(cycleRequirements());
@@ -120,8 +121,9 @@ public class RelifInstance {
         return converse_bound;
     }
 
-    public void boundRelation(Relation newRelation) {
+    public kodkod.ast.Formula boundRelation(Relation newRelation) {
         bounds.bound(newRelation, allAtomsTupleSet);
+        return newRelation.in(atoms);
     }
 
 
@@ -145,70 +147,6 @@ public class RelifInstance {
         return atomPartition;
     }
 
-    private kodkod.ast.Formula axiom1() {
-        // Ax. 1: X = X;1'
-        // x = x;1' for all atoms
-        // { all x: At | x = cycle[x,Ids] }
-
-        Variable x1 = Variable.unary("x");
-        return apply(cycles, x1, identity).eq(x1)
-                .forAll(x1.oneOf(atoms));
-    }
-
-
-    private kodkod.ast.Formula axiom2() {
-        //  all x,y,z: At | z in cycle[x,y] iff y in cycle[conv[x], z]
-        Variable x2 = Variable.unary("xz");
-        Variable y2 = Variable.unary("y2");
-        Variable z2 = Variable.unary("z2");
-        kodkod.ast.Formula f1 = z2.in(apply(cycles, x2, y2));
-        kodkod.ast.Formula f2 = y2.in(apply(cycles, x2.join(converse), z2));
-
-        return f1.iff(f2)
-                .forAll(x2.oneOf(atoms)
-                        .and(y2.oneOf(atoms))
-                        .and(z2.oneOf(atoms)));
-    }
-
-    private kodkod.ast.Formula axiom3() {
-        //  fact { all x,y,z: At | z in cycle[x,y] iff x in cycle[z, conv[y]] }
-        Variable x3 = Variable.unary("x3");
-        Variable y3 = Variable.unary("y3");
-        Variable z3 = Variable.unary("z3");
-        kodkod.ast.Formula f3_1 = z3.in(apply(cycles, x3, y3));
-        kodkod.ast.Formula f3_2 = x3.in(apply(cycles, z3, y3.join(converse)));
-
-        return f3_1.iff(f3_2)
-                .forAll(x3.oneOf(atoms)
-                        .and(y3.oneOf(atoms))
-                        .and(z3.oneOf(atoms)));
-    }
-
-    private kodkod.ast.Formula axiom4() {
-        // all v,w,x,y: At |
-        //      (some z:At | z in cycle[v,x] and z in cycle[w,y])
-        //  iff (some z:At | z in cycle[conv[v],w] and z in cycle[x,conv[y]])
-        Variable v = Variable.unary("v");
-        Variable w = Variable.unary("w");
-        Variable x = Variable.unary("x");
-        Variable y = Variable.unary("y");
-        Variable z = Variable.unary("z");
-        Variable z2 = Variable.unary("z2");
-        kodkod.ast.Formula f4_1 = z.in(apply(cycles, v, x)).and(z.in(apply(cycles, w, y))).forSome(z.oneOf(atoms));
-        kodkod.ast.Formula f4_2 = z2.in(apply(cycles, v.join(converse), w)).and(z2.in(apply(cycles, x, y.join(converse)))).forSome(z2.oneOf(atoms));
-
-        return f4_1.iff(f4_2)
-                .forAll(v.oneOf(atoms)
-                        .and(w.oneOf(atoms))
-                        .and(x.oneOf(atoms))
-                        .and(y.oneOf(atoms)));
-    }
-
-
-    // Returns e[x,y]
-    private static Expression apply(Expression e, Expression x, Expression y) {
-        return y.join((x.join(e)));
-    }
 
 
     public Bounds getBounds() {

@@ -29,30 +29,38 @@ public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, kodkod.ast.Ex
                 formulas.add(f);
             }
         }
-        s.getCommand().accept(this);
-        // TODO: Null
+        kodkod.ast.Formula target = (kodkod.ast.Formula) s.getCommand().accept(this);
 
-        return formulas.stream().reduce((x,y) -> x.and(y)).orElse(kodkod.ast.Formula.TRUE);
+        return formulas.stream().reduce((x,y) -> x.and(y)).orElse(kodkod.ast.Formula.TRUE).and(target);
     }
 
     @Override
-    public Void visit(Command c) {
-        System.out.println("Command: " + c);
-        // TODO: Null
-        return null;
+    public kodkod.ast.Formula visit(Command c) {
+        if(c.getStatement().isPresent()) {
+            kodkod.ast.Formula formula = (kodkod.ast.Formula)c.getStatement().get().accept(this);
+            if (c.getType() == CommandType.CHECK) {
+                return formula.not();
+            } else {
+                return formula;
+            }
+        }
+        return kodkod.ast.Formula.TRUE;
     }
 
     @Override
-    public Void visit(Declaration d) {
+    // We return a formula because we need to state
+    // the fact that this relation is contained in the "all atoms" relation
+    public kodkod.ast.Formula visit(Declaration d) {
+        kodkod.ast.Formula f = kodkod.ast.Formula.TRUE;
         for (String s: d.getIdentifiers()) {
             if(symbolTable.containsKey(s)) {
                 throw new IllegalStateException("Already declared " + s);
             }
             Relation newRelation = Relation.unary(s);
             symbolTable.put(s, newRelation);
-            instance.boundRelation(newRelation);
+            f = f.and(instance.boundRelation(newRelation));
         }
-        return null; // TODO: null
+        return f;
     }
 
     @Override

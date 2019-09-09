@@ -42,6 +42,8 @@ newline = \r|\n|\r\n
 
 "(" { return symbol(yytext(), sym.OPENPAREN); }
 ")" { return symbol(yytext(), sym.CLOSEPAREN); }
+"{" { return symbol(yytext(), sym.LBRACKET); }
+"}" { return symbol(yytext(), sym.RBRACKET); }
 
 "rel" { return symbol(yytext(), sym.REL); }
 "," { return symbol(yytext(), sym.COMMA); }
@@ -72,6 +74,7 @@ newline = \r|\n|\r\n
 
 
 "run" { return symbol(yytext(), sym.RUN); }
+"check" { return symbol(yytext(), sym.CHECK); }
 "id" { return symbol(yytext(), sym.IDENTITY); }
 "sym" { return symbol(yytext(), sym.SYMMETRIC); }
 "asym" { return symbol(yytext(), sym.ASYMMETRIC); }

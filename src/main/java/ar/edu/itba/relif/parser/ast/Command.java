@@ -3,20 +3,24 @@ package ar.edu.itba.relif.parser.ast;
 import ar.edu.itba.relif.parser.visitor.ReturnVisitor;
 import ar.edu.itba.relif.parser.visitor.Visitor;
 
+import java.util.Optional;
+
 public class Command implements AstNode {
     private final Scope scope;
 
-    String command;
+    private CommandType type;
+    private Optional<Statement> statement;
 
-    public Command(String command, Scope scope) {
-        this.command = command;
+    public Command(CommandType type, Optional<Statement> statement, Scope scope) {
+        this.statement = statement;
+        this.type = type;
         this.scope = scope;
     }
 
     @Override
     public String toString() {
         return "Command{" +
-                "command='" + command + '\'' +
+                "type='" + type + '\'' +
                 '}';
     }
 
@@ -24,8 +28,12 @@ public class Command implements AstNode {
         return scope;
     }
 
-    public String getCommand() {
-        return command;
+    public CommandType getType() {
+        return type;
+    }
+
+    public Optional<Statement> getStatement() {
+        return statement;
     }
 
     @Override
