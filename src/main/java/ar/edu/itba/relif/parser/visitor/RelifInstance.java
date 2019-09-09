@@ -56,6 +56,7 @@ public class RelifInstance {
 
 
         // Bound the sets
+        // TODO: Bound exactly
         Universe universe = new Universe(allAtoms);
         bounds = new Bounds(universe);
         TupleFactory factory = universe.factory();
@@ -68,7 +69,9 @@ public class RelifInstance {
 
         bounds.bound(symmetric, factory.setOf(symmetricAtoms.toArray()));
         bounds.bound(asymmetric, factory.setOf(asymmetricAtoms.toArray()));
-        bounds.bound(atoms, allAtomsTupleSet);
+
+        // The first identity atom is also on the lower bound for the atoms
+        bounds.bound(atoms, factory.setOf(identityAtoms.get(0)),allAtomsTupleSet);
 
 
 
