@@ -1,6 +1,8 @@
-package ar.edu.itba.relif.parser.visitor;
+package ar.edu.itba.relif.core;
 
+import ar.edu.itba.relif.core.RelifInstance;
 import ar.edu.itba.relif.parser.ast.*;
+import ar.edu.itba.relif.parser.visitor.ReturnVisitor;
 import kodkod.ast.Expression;
 import kodkod.ast.Relation;
 
@@ -9,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, kodkod.ast.Expression> {
+public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, Expression> {
 
     private RelifInstance instance;
     private Map<String, Relation> symbolTable;

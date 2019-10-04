@@ -1,8 +1,7 @@
-package ar.edu.itba.relif.parser.visitor;
+package ar.edu.itba.relif.core;
 
 
 import ar.edu.itba.relif.parser.ast.Scope;
-import kodkod.ast.Expression;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
 import kodkod.ast.Variable;
@@ -54,7 +53,6 @@ public class RelifInstance {
         asymmetric = kodkod.ast.Relation.unary("Asym");
         atoms = kodkod.ast.Relation.unary("At");
 
-
         // Bound the sets
         // TODO: Bound exactly
         Universe universe = new Universe(allAtoms);
@@ -72,8 +70,6 @@ public class RelifInstance {
 
         // The first identity atom is also on the lower bound for the atoms
         bounds.bound(atoms, factory.setOf(identityAtoms.get(0)),allAtomsTupleSet);
-
-
 
         // Converse and cycles
         cycles = kodkod.ast.Relation.nary("cycles", 3);
@@ -137,10 +133,9 @@ public class RelifInstance {
 
     private kodkod.ast.Formula converseRequirements() {
         Variable x = Variable.unary("x");
-        kodkod.ast.Formula converseExists = x.join(converse).one().forAll(x.oneOf(atoms));
+        kodkod.ast.Formula converseFunctional = converse.function(atoms, atoms);
         kodkod.ast.Formula converseSymmetric = converse.eq(converse.transpose());
-        kodkod.ast.Formula allAtomsInConverse = kodkod.ast.Relation.UNIV.join(converse).eq(atoms);
-        return converseExists.and(converseSymmetric).and(allAtomsInConverse);
+        return converseFunctional.and(converseSymmetric);
     }
 
 

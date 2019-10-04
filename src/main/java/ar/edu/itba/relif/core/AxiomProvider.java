@@ -1,4 +1,4 @@
-package ar.edu.itba.relif.parser.visitor;
+package ar.edu.itba.relif.core;
 
 public interface AxiomProvider {
     kodkod.ast.Formula getAxioms();
