@@ -14,5 +14,4 @@ public class SpecificationParser {
         Specification spec = (Specification)result.value;
         return spec;
     }
-
 }

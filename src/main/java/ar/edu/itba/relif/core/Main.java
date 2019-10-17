@@ -48,14 +48,23 @@ public class Main {
         String run = "rel R\n" +
                 "run {} for 3";
 
-        Reader reader = new StringReader(non_dense_order);
-        Specification spec = SpecificationParser.getSpecification(reader);
-        solve(spec);
+        run(non_dense_order);
+    }
+
+
+    public static void run(String specString) {
+        Reader reader = new StringReader(specString);
+        Specification spec = null;
+        try {
+            spec = SpecificationParser.getSpecification(reader);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       // solve(spec);
         Solution s = findSolution(spec).get();
         RepresentationFinder rf = new RepresentationFinder(new RelifSolution(s), 3);
         solve(rf);
     }
-
 
 
     public static void solve(Specification spec) {

@@ -4,7 +4,6 @@ import kodkod.ast.Relation;
 import kodkod.engine.Solution;
 import kodkod.instance.Instance;
 import kodkod.instance.TupleSet;
-import kodkod.instance.Universe;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -29,10 +29,13 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 number = [0-9]+
 ident = [A-Za-z][A-Za-z0-9]*
 space = [\ \t]
-newline = \r|\n|\r\n
-
+newline = (\r|\n|\r\n)
+input_character = [^\r\n]
+traditional_comment   = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+end_of_line_comment = "//" {input_character}* {newline}?
 %%
-
+{traditional_comment} {}
+{end_of_line_comment} {}
 {newline} {}
 {space} {}
 
