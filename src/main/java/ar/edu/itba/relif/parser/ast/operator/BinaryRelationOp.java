@@ -1,5 +1,8 @@
 package ar.edu.itba.relif.parser.ast.operator;
 
+/**
+ * Binary operations between relational terms
+ */
 public enum BinaryRelationOp {
     PLUS("+"),
     MINUS("-"),

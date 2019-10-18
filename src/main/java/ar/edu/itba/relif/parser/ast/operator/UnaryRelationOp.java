@@ -1,5 +1,8 @@
 package ar.edu.itba.relif.parser.ast.operator;
 
+/**
+ * Unary operators for relational expressions
+ */
 public enum UnaryRelationOp {
     CONVERSE("~");
 

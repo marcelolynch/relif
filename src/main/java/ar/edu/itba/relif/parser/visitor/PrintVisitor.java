@@ -2,6 +2,7 @@ package ar.edu.itba.relif.parser.visitor;
 import ar.edu.itba.relif.parser.ast.*;
 
 public class PrintVisitor implements Visitor {
+
     @Override
     public void visit(Specification s) {
         for (Statement stmnt: s.getStatements()) {

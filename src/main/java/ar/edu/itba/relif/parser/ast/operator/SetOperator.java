@@ -1,5 +1,8 @@
 package ar.edu.itba.relif.parser.ast.operator;
 
+/**
+ * Set comparison operators
+ */
 public enum SetOperator {
     IN("in"),
     EQUALS("=");
