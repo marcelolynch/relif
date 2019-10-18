@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import ar.edu.itba.relif.application.view.RelifCodeArea?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ar.edu.itba.relif.application.controller.SolveWindowController">
+    <top>
+        <MenuBar>
+            <Menu text="File">
+            </Menu>
+            <Menu text="Engine">
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+    <StackPane prefHeight="100" prefWidth="500" maxWidth="600">
+        <VirtualizedScrollPane>
+            <content>
+                <RelifCodeArea fx:id="codeArea" />
+            </content>
+        </VirtualizedScrollPane>
+    </StackPane>
+    </left>
+</BorderPane>

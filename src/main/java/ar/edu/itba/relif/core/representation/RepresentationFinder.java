@@ -1,7 +1,7 @@
 package ar.edu.itba.relif.core.representation;
 
 import ar.edu.itba.relif.core.FormulaUtilities;
-import ar.edu.itba.relif.core.RelifSolution;
+import ar.edu.itba.relif.core.RelifKodkodSolution;
 import kodkod.ast.Expression;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
@@ -19,7 +19,7 @@ public class RepresentationFinder {
     private final Formula formula;
 
 
-    public RepresentationFinder(RelifSolution solution, int bound) {
+    public RepresentationFinder(RelifKodkodSolution solution, int bound) {
         // Bound the sets
         List<Object> universeElems = new ArrayList<>();
         List<String> concreteSetUpperBound = new ArrayList<>();
@@ -29,13 +29,13 @@ public class RepresentationFinder {
 
         universeElems.addAll(concreteSetUpperBound);
         // Add the universe of the relation algebra to this universe
-        universeElems.addAll(solution.getUniverseAtoms()); // Add all the relation algebra atoms
+        universeElems.addAll(solution.getUniverseAtomList()); // Add all the relation algebra atoms
         Universe universe = new Universe(universeElems);
         Bounds bounds = new Bounds(universe);
 
-        Relation cycles = solution.getCycles();
-        Relation conv = solution.getConverse();
-        Relation at = solution.getAtoms();
+        Relation cycles = solution.getCyclesRelation();
+        Relation conv = solution.getConverseRelation();
+        Relation at = solution.getAtomsRelation();
 
 
         TupleSet allAtomsTupleSet = repurposeTuples(solution.getAtomTuples(), universe);

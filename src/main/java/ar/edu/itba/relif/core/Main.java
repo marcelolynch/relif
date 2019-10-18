@@ -62,7 +62,7 @@ public class Main {
         }
        // solve(spec);
         Solution s = findSolution(spec).get();
-        RepresentationFinder rf = new RepresentationFinder(new RelifSolution(s), 3);
+        RepresentationFinder rf = new RepresentationFinder(new RelifKodkodSolution(s), 3);
         solve(rf);
     }
 
