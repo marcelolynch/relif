@@ -90,4 +90,10 @@ public class RelifKodkodSolution {
     public TupleSet getAsymmetricTuples() {
         return getTuples("Asym");
     }
+
+
+    @Override
+    public String toString() {
+        return kodkodInstance.toString();
+    }
 }

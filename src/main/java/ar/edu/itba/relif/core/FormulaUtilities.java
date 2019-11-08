@@ -18,6 +18,20 @@ public class FormulaUtilities {
         return totality.and(imageExists);
     }
 
+    // Given a ternary relation r, return a formula expressing
+    // that r : dom x dom -> codom is a partial function (at most one image)
+    public static Formula ternaryRelationIsPartialFunction(Relation r, Relation dom, Relation codom) {
+        Variable x1 = Variable.unary("x1");
+        Variable x2 = Variable.unary("x2");
+
+        Formula atMostOneImage = (apply(r, x1, x2).one()).or(apply(r, x1, x2).no())
+                .forAll(x1.oneOf(dom))
+                .forAll(x2.oneOf(dom));
+
+        Formula wellDefinedDomain = r.join(codom).in(dom.product(dom)); // Domain is the relation
+        return atMostOneImage.and(wellDefinedDomain);
+    }
+
 
 
     // Apply f as a function with arguments

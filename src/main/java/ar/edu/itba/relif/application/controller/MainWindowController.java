@@ -1,6 +1,10 @@
 package ar.edu.itba.relif.application.controller;
 
 import ar.edu.itba.relif.application.view.ViewLoader;
+import ar.edu.itba.relif.core.iterator.RelifSolutionIterator;
+import ar.edu.itba.relif.core.SolutionFinder;
+import ar.edu.itba.relif.parser.SpecificationParser;
+import ar.edu.itba.relif.parser.ast.Specification;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -9,6 +13,7 @@ import javafx.util.Pair;
 import org.fxmisc.richtext.CodeArea;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.Optional;
 
 public class MainWindowController implements Controller {
@@ -56,14 +61,23 @@ public class MainWindowController implements Controller {
 
     @FXML
     private void handleRun(ActionEvent actionEvent) {
-        ViewLoader loader = new ViewLoader(SOLVER_WINDOW_FXML_PATH);
-        final Scene scene = loader.getScene();
-        final SolveWindowController ctrl = loader.getController();
 
-        // 1. Build specification, check syntax errors
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        ctrl.setStage(stage);
-        stage.show();
+        try {
+            // TODO: Exceptions -- syntax errors
+            Specification specification = SpecificationParser.getSpecification(new StringReader(codeArea.getText()));
+            RelifSolutionIterator solutions = SolutionFinder.findSolutions(specification);
+            ViewLoader loader = new ViewLoader(SOLVER_WINDOW_FXML_PATH);
+            final Scene scene = loader.getScene();
+            final SolveWindowController ctrl = loader.getController();
+            ctrl.setSolution(solutions);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            ctrl.setStage(stage);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

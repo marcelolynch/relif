@@ -2,6 +2,7 @@ package ar.edu.itba.relif.core;
 
 
 import kodkod.instance.Tuple;
+import kodkod.instance.TupleSet;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +19,11 @@ public class RelifSolution {
 
     public RelifSolution(RelifKodkodSolution rks) {
         this.rks = rks;
+    }
+
+
+    RelifKodkodSolution getUnderlyingKodkodSolution() {
+        return rks;
     }
 
     public Set<String> getAtoms() {
@@ -52,5 +58,28 @@ public class RelifSolution {
                 .collect(toMap(e -> e.getKey(),
                         e -> e.getValue().stream()
                                 .map(t -> t.atom(0).toString()).collect(toList())));
+    }
+
+    private Collection<String> unaryTuplesToStrings(TupleSet tuples) {
+        return tuples.stream()
+                .map(t -> t.atom(0).toString()).collect(Collectors.toList());
+    }
+
+    public Collection<String> getIdentities() {
+        return unaryTuplesToStrings(rks.getIdentityTuples());
+    }
+
+    public Collection<String> getSymmetrics() {
+        return unaryTuplesToStrings(rks.getSymmetricTuples());
+    }
+
+    public Collection<String> getAsymmetrics() {
+        return unaryTuplesToStrings(rks.getAsymmetricTuples());
+    }
+
+
+    @Override
+    public String toString() {
+        return rks.toString();
     }
 }

@@ -1,15 +1,21 @@
-package ar.edu.itba.relif.core.representation;
+package ar.edu.itba.relif.core;
 
-import ar.edu.itba.relif.core.FormulaUtilities;
-import ar.edu.itba.relif.core.RelifKodkodSolution;
+import ar.edu.itba.relif.core.iterator.RepresentationIterator;
+import javafx.util.Pair;
 import kodkod.ast.Expression;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
 import kodkod.ast.Variable;
+import kodkod.engine.Solution;
+import kodkod.engine.Solver;
+import kodkod.engine.config.Options;
+import kodkod.engine.satlab.SATFactory;
 import kodkod.instance.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static ar.edu.itba.relif.core.FormulaUtilities.apply;
 
@@ -17,14 +23,17 @@ public class RepresentationFinder {
 
     private final Bounds bounds;
     private final Formula formula;
+    private final RelifSolution relifSolution;
 
+    public RepresentationFinder(RelifSolution rs, int bound) {
+        relifSolution = rs;
+        RelifKodkodSolution solution = rs.getUnderlyingKodkodSolution();
 
-    public RepresentationFinder(RelifKodkodSolution solution, int bound) {
         // Bound the sets
         List<Object> universeElems = new ArrayList<>();
         List<String> concreteSetUpperBound = new ArrayList<>();
         for (int i = 0; i < bound; i++) {
-            concreteSetUpperBound.add("X_" + i);                    // X will be the set in which we'd like a representation
+            concreteSetUpperBound.add("X" + i);                    // X will be the set in which we'd like a representation
         }
 
         universeElems.addAll(concreteSetUpperBound);
@@ -50,9 +59,9 @@ public class RepresentationFinder {
         Relation labelling = Relation.ternary("labels");
 
 
-        // Labelling is a total function X^2 -> At
+        // Labelling is a function X^2 -> At
         // This is, we are labelling the edges of a complete graph with elements of X as vertices
-        Formula labellingIsFuncion = FormulaUtilities.ternaryRelationIsFunctional(labelling, x, at);
+        Formula labellingIsFuncion = FormulaUtilities.ternaryRelationIsPartialFunction(labelling, x, at);
 
         // Ensure the labelling corresponds to a representation (Hirsch & Hodgkinson)
 
@@ -118,10 +127,23 @@ public class RepresentationFinder {
 
 
     private static Formula getCorrectLabellingFormula(Relation labelling, Relation x, Relation at, Relation conv, Relation cycles) {
+        Formula nonEmptySet = x.some();
+        Formula allAtomsAreAssigned = allAtomsAreAssigned(labelling, x, at);
         Formula converseCorrectness = converseCorrectness(labelling, x, conv);
         Formula consistentTriangles = consistentTriangles(labelling, x, cycles);
         Formula consistentTriplesAreWitnessed = consistentTriplesAreWitnessed (labelling, x, at, cycles);
-        return converseCorrectness.and(consistentTriangles).and(consistentTriplesAreWitnessed);
+        return nonEmptySet
+                .and(allAtomsAreAssigned)
+                .and(converseCorrectness)
+                .and(consistentTriangles)
+                .and(consistentTriplesAreWitnessed)
+                ;
+    }
+
+    private static Formula allAtomsAreAssigned(Relation labelling, Relation x, Relation at) {
+        // All atoms are in the image of the labelling
+        // TODO: Preguntarle a Marcelo
+        return at.in(apply(labelling, x, x));
     }
 
 
@@ -135,9 +157,12 @@ public class RepresentationFinder {
         Expression l_cb = apply(labelling, c, b);
         Expression ac_comp_cb = apply(cycles, l_ac, l_cb); // L(a,c);L(c,b)
 
-        // L(a,b) <= L(a,c);L(c,b)
-        return l_ab
+
+
+        // L(a,b) <= L(a,c);L(c,b) or there are no labels L(a,c) and L(c,b)
+        return (l_ab
                 .in(ac_comp_cb)
+                .or(l_ac.no().or(l_cb.no())))
                 .forAll(a.oneOf(x)
                         .and(b.oneOf(x))
                         .and(c.oneOf(x)));
@@ -166,7 +191,7 @@ public class RepresentationFinder {
         Expression l_wy = apply(labelling, w, y);
         Expression a_comp_b = apply(cycles, a, b);
 
-        Formula p = l_xy.in(a_comp_b);
+        Formula p = l_xy.some().and(l_xy.in(a_comp_b));
         Formula q = (l_xw.eq(a)).and(l_wy.eq(b)).forSome(w.oneOf(X));
 
         // L(x,y) <= a;b   -> there is some w s.t L(x,w) = a , L(w,y) = b
@@ -175,6 +200,21 @@ public class RepresentationFinder {
                         .and(y.oneOf(X))
                         .and(a.oneOf(at))
                         .and(b.oneOf(at)));
+    }
+
+
+    public Iterator<Representation> findAll() {
+        Solver solver = new Solver();
+        solver.options().setSolver(SATFactory.DefaultSAT4J);
+        solver.options().setBitwidth(1);
+        solver.options().setIntEncoding(Options.IntEncoding.TWOSCOMPLEMENT);
+        solver.options().setSymmetryBreaking(50);
+        solver.options().setSkolemDepth(0);
+
+
+        Iterator<Solution> sol = solver.solveAll(getFormula(), getBounds());
+
+        return new RepresentationIterator(relifSolution, sol);
     }
 
 }

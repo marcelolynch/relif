@@ -4,24 +4,22 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<?import javafx.scene.layout.VBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ar.edu.itba.relif.application.controller.SolveWindowController">
     <top>
         <MenuBar>
-            <Menu text="File">
-            </Menu>
-            <Menu text="Engine">
+            <Menu text="Actions">
+                <MenuItem text="Find next solution" onAction="#doFindNext"/>
+                <MenuItem text="Find representation" onAction="#doFindRepresentation"/>
             </Menu>
         </MenuBar>
     </top>
     <left>
-    <StackPane prefHeight="100" prefWidth="500" maxWidth="600">
-        <VirtualizedScrollPane>
-            <content>
-                <RelifCodeArea fx:id="codeArea" />
-            </content>
-        </VirtualizedScrollPane>
-    </StackPane>
+    <VBox prefHeight="300" prefWidth="300" maxWidth="600">
+        <TableView fx:id="atomTable" />
+        <VBox fx:id="userRelations" />
+    </VBox>
     </left>
 </BorderPane>

@@ -1,6 +1,5 @@
 package ar.edu.itba.relif.core;
 
-import ar.edu.itba.relif.core.representation.RepresentationFinder;
 import ar.edu.itba.relif.parser.SpecificationParser;
 import ar.edu.itba.relif.parser.ast.Specification;
 import kodkod.ast.Formula;
@@ -62,7 +61,7 @@ public class Main {
         }
        // solve(spec);
         Solution s = findSolution(spec).get();
-        RepresentationFinder rf = new RepresentationFinder(new RelifKodkodSolution(s), 3);
+        RepresentationFinder rf = new RepresentationFinder(new RelifSolution(new RelifKodkodSolution(s)), 3);
         solve(rf);
     }
 
