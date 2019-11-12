@@ -4,21 +4,16 @@ import ar.edu.itba.relif.application.view.NumericField;
 import ar.edu.itba.relif.core.RelifSolution;
 import ar.edu.itba.relif.core.Representation;
 import ar.edu.itba.relif.core.RepresentationFinder;
+import ar.edu.itba.relif.util.Pair;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Pair;
-import kodkod.engine.Solution;
-import kodkod.engine.Solver;
-import kodkod.engine.config.Options;
-import kodkod.engine.satlab.SATFactory;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class RepresentationWindowController implements Controller {
     @FXML
@@ -43,22 +38,24 @@ public class RepresentationWindowController implements Controller {
             System.out.println("No solution");
         }
 
-        if(all.hasNext()) {
+        while(all.hasNext()) {
             Representation next = all.next();
 
             representations.getChildren().add(new Text("===== REPRESENTATION: ========"));
-            representations.getChildren().add(new Text("===== BACKING SET ========"));
-            representations.getChildren().add(new Text(reprToText("X", next.getBackingSet())));
-
+            representations.getChildren().add(new Text("===== BASE SET ========"));
+            representations.getChildren().add(new Text(reprToText("Univ =", next.getBackingSet())));
+            System.out.println(reprToText("X", next.getBackingSet()));
             representations.getChildren().add(new Text("===== ATOMS ========"));
             for(Pair<String, List<Pair<String, String>>> e: next.getAtoms()) {
-                representations.getChildren().add(new Text(reprToText(e.getKey(), e.getValue())));
+                representations.getChildren().add(new Text(reprToText(e.fst(), e.snd())));
+                System.out.println(reprToText(e.fst(), e.snd()));
             }
+            System.out.println("=========================================");
 
             representations.getChildren().add(new Text("===== USER DEFINED RELATIONS ========"));
 
             for(Pair<String, List<Pair<String, String>>> e: next.getUserDefinedRelations()) {
-                representations.getChildren().add(new Text(reprToText(e.getKey(), e.getValue())));
+                representations.getChildren().add(new Text(reprToText(e.fst(), e.snd())));
             }
 
         }
@@ -70,9 +67,9 @@ public class RepresentationWindowController implements Controller {
         sb.append(" = {");
         for(Pair<String, String> p: values) {
             sb.append("(");
-            sb.append(p.getKey());
+            sb.append(p.fst());
             sb.append(",");
-            sb.append(p.getValue());
+            sb.append(p.snd());
             sb.append(") ");
         }
         sb.append("}");

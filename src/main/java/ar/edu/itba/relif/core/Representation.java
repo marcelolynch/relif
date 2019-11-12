@@ -1,6 +1,5 @@
 package ar.edu.itba.relif.core;
-
-import javafx.util.Pair;
+import ar.edu.itba.relif.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public class Representation {
     public List<Pair<String, List<Pair<String,String>>>> getAtoms() {
         return representationMap.entrySet()
                 .stream()
-                .map(e -> new Pair<>(e.getKey(), e.getValue()))
+                .map(e -> Pair.of(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
 
@@ -42,6 +41,6 @@ public class Representation {
         for (List<Pair<String,String>> l: representationMap.values()) {
             pairs.addAll(l);
         }
-        return pairs.stream().sorted(Comparator.<Pair<String,String>, String>comparing(Pair::getKey).thenComparing(Pair::getValue)).collect(Collectors.toList());
+        return pairs.stream().sorted(Comparator.<Pair<String,String>, String>comparing(Pair::fst).thenComparing(Pair::snd)).collect(Collectors.toList());
     }
 }

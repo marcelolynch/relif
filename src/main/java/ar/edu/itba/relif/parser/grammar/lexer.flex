@@ -49,6 +49,7 @@ end_of_line_comment = "//" {input_character}* {newline}?
 "}" { return symbol(yytext(), sym.RBRACKET); }
 
 "rel" { return symbol(yytext(), sym.REL); }
+"atom" { return symbol(yytext(), sym.ATOM); }
 "," { return symbol(yytext(), sym.COMMA); }
 
 "=" { return symbol(yytext(), sym.EQUALS); }
@@ -82,6 +83,7 @@ end_of_line_comment = "//" {input_character}* {newline}?
 "sym" { return symbol(yytext(), sym.SYMMETRIC); }
 "asym" { return symbol(yytext(), sym.ASYMMETRIC); }
 "but" { return symbol(yytext(), sym.BUT); }
+"exactly" { return symbol(yytext(), sym.EXACTLY); }
 "default" { return symbol(yytext(), sym.DEFAULT); }
 
 

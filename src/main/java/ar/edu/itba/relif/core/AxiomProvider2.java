@@ -30,7 +30,6 @@ public class AxiomProvider2 implements AxiomProvider {
         // Ax. 1: X = X;1'
         // x = x;1' for all atoms
         // { all x: At | x = cycle[x,Ids] }
-
         Variable x1 = Variable.unary("x");
         return apply(cycles, x1, identity).eq(x1)
                 .forAll(x1.oneOf(atoms));

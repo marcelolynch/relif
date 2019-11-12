@@ -1,5 +1,7 @@
 package ar.edu.itba.relif.parser.ast;
 
+import ar.edu.itba.relif.util.Pair;
+
 /**
  * The scope of a Relif problem.
  * The scope consists of bounds on the amount of identity, symmetric and
@@ -9,8 +11,9 @@ package ar.edu.itba.relif.parser.ast;
  * categorized in one of them and put as Kodkod upper bounds of these classes before solving.
  */
 public class Scope {
-    public static final Scope DEFAULT = new Scope(1,3,3);
-    private int identities, symmetrics, asymmetrics;
+    public static final Scope DEFAULT = new Scope(Pair.of(1, false), Pair.of(3, false), Pair.of(3, false));
+
+    private Pair<Integer, Boolean> identities, symmetrics, asymmetrics;
 
 
     /**
@@ -19,30 +22,39 @@ public class Scope {
      * @param symmetrics upper bound on the amount of symmetric atoms
      * @param asymmetrics upper bound on the amount of asymmetric atoms
      */
-    public Scope(int identities, int symmetrics, int asymmetrics) {
+    public Scope(Pair<Integer, Boolean> identities, Pair<Integer, Boolean> symmetrics, Pair<Integer, Boolean> asymmetrics) {
         this.identities = identities;
         this.symmetrics = symmetrics;
         this.asymmetrics = asymmetrics;
     }
 
     /**
-     * @return upper bound on the amount of identity atoms
+     * @return bound on the amount of identity atoms. The first component
+     * of the pair specifies the upper bound. The second (boolean) component
+     * of the pair is true if the bound is exact, that is, the specified bound
+     * is both lower and upper
      */
-    public int getIdentities() {
+    public Pair<Integer, Boolean> getIdentities() {
         return identities;
     }
 
     /**
-     * @return upper bound on the amount of symmetric atoms
+     * @return bound on the amount of symmetric atoms. The first component
+     * of the pair specifies the upper bound. The second (boolean) component
+     * of the pair is true if the bound is exact, that is, the specified bound
+     * is both lower and upper
      */
-    public int getSymmetrics() {
+    public Pair<Integer, Boolean> getSymmetrics() {
         return symmetrics;
     }
 
     /**
-     * @return upper bound on the amount of asymmetric atoms
+     * @return bound on the amount of asymmetric atoms. The first component
+     * of the pair specifies the upper bound. The second (boolean) component
+     * of the pair is true if the bound is exact, that is, the specified bound
+     * is both lower and upper
      */
-    public int getAsymmetrics() {
+    public Pair<Integer, Boolean> getAsymmetrics() {
         return asymmetrics;
     }
 }

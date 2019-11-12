@@ -60,6 +60,9 @@ public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, Expression> {
             }
             Relation newRelation = Relation.unary(s);
             symbolTable.put(s, newRelation);
+            if (d.isAtomDeclaration()) {
+                f = f.and(newRelation.one());
+            }
             f = f.and(instance.boundRelation(newRelation));
         }
         return f;

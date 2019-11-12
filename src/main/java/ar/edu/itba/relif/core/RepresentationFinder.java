@@ -1,7 +1,6 @@
 package ar.edu.itba.relif.core;
 
 import ar.edu.itba.relif.core.iterator.RepresentationIterator;
-import javafx.util.Pair;
 import kodkod.ast.Expression;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
@@ -15,7 +14,6 @@ import kodkod.instance.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static ar.edu.itba.relif.core.FormulaUtilities.apply;
 
@@ -59,7 +57,7 @@ public class RepresentationFinder {
         Relation labelling = Relation.ternary("labels");
 
 
-        // Labelling is a function X^2 -> At
+        // Labelling is a partial function X^2 -> At
         // This is, we are labelling the edges of a complete graph with elements of X as vertices
         Formula labellingIsFuncion = FormulaUtilities.ternaryRelationIsPartialFunction(labelling, x, at);
 
@@ -107,9 +105,10 @@ public class RepresentationFinder {
         return factory.setOf(bound);
     }
 
-    // Bring TupleSet from another universe to this universe
-    // This assumes this universe has all the atoms which make up the tupleSet
-    // (otherwise an exception will be thrown eventually).
+    // Generate TupleSet of this universe with all the tuples from a TupleSet (which comes
+    // potentially from another universe's TupleFactory).
+    // This method assumes this universe has all the atoms which make up the tupleSet
+    // (otherwise an exception will be thrown eventually)
     private static TupleSet repurposeTuples(TupleSet tupleSet, Universe universe) {
         List<Tuple> repurposed = new ArrayList<>();
         TupleFactory tf = universe.factory();
@@ -158,14 +157,12 @@ public class RepresentationFinder {
         Expression ac_comp_cb = apply(cycles, l_ac, l_cb); // L(a,c);L(c,b)
 
 
-
-        // L(a,b) <= L(a,c);L(c,b) or there are no labels L(a,c) and L(c,b)
-        return (l_ab
-                .in(ac_comp_cb)
-                .or(l_ac.no().or(l_cb.no())))
+        // If L(a,c) and L(c,b) exist, then L(a,b) exists and
+        // L(a,b) <= L(a,c);L(c,b)
+        return (l_ac.some().and(l_cb.some())).implies(l_ab.some().and(l_ab.in(ac_comp_cb)))
                 .forAll(a.oneOf(x)
-                        .and(b.oneOf(x))
-                        .and(c.oneOf(x)));
+                        .and(b.oneOf(x)
+                        .and(c.oneOf(x))));
     }
 
     private static Formula converseCorrectness(Relation labelling, Relation x, Relation conv) {

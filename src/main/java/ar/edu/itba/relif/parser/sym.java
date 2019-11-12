@@ -8,45 +8,48 @@ package ar.edu.itba.relif.parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int IDENTITY = 27;
-  public static final int CLOSEPAREN = 23;
-  public static final int AND = 18;
-  public static final int OPENPAREN = 22;
-  public static final int PLUS = 4;
-  public static final int ASYMMETRIC = 28;
-  public static final int OR = 19;
-  public static final int IN = 10;
+  public static final int SOME = 13;
+  public static final int LBRACKET = 33;
+  public static final int EQUALS = 4;
+  public static final int UNIV = 15;
+  public static final int CONVERSE = 8;
   public static final int REL = 2;
-  public static final int NOT = 17;
-  public static final int CONVERSE = 7;
-  public static final int IDENTIFIER = 33;
-  public static final int IDEN = 13;
-  public static final int IMPLIES = 20;
-  public static final int LBRACKET = 31;
-  public static final int RBRACKET = 32;
-  public static final int CHECK = 16;
-  public static final int EQUALS = 3;
-  public static final int COMMA = 9;
-  public static final int SYMMETRIC = 26;
-  public static final int NUMBER = 34;
+  public static final int FOR = 26;
+  public static final int MINUS = 6;
+  public static final int CLOSEPAREN = 24;
+  public static final int NOT = 18;
+  public static final int AND = 19;
+  public static final int OPENPAREN = 23;
+  public static final int ASYMMETRIC = 29;
+  public static final int IN = 11;
+  public static final int OR = 20;
+  public static final int COMMA = 10;
+  public static final int ATOM = 3;
+  public static final int IMPLIES = 21;
+  public static final int PLUS = 5;
   public static final int EOF = 0;
-  public static final int RUN = 15;
-  public static final int BUT = 30;
-  public static final int COMPOSE = 6;
-  public static final int NEWLINE = 24;
-  public static final int MINUS = 5;
-  public static final int IFF = 21;
+  public static final int RBRACKET = 34;
   public static final int error = 1;
-  public static final int SOME = 12;
-  public static final int UNIV = 14;
-  public static final int INTERSECTION = 8;
-  public static final int DEFAULT = 29;
-  public static final int FOR = 25;
-  public static final int NO = 11;
+  public static final int INTERSECTION = 9;
+  public static final int NEWLINE = 25;
+  public static final int CHECK = 17;
+  public static final int NUMBER = 36;
+  public static final int NO = 12;
+  public static final int COMPOSE = 7;
+  public static final int BUT = 31;
+  public static final int IDEN = 14;
+  public static final int DEFAULT = 30;
+  public static final int EXACTLY = 32;
+  public static final int IDENTITY = 28;
+  public static final int SYMMETRIC = 27;
+  public static final int RUN = 16;
+  public static final int IFF = 22;
+  public static final int IDENTIFIER = 35;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "REL",
+  "ATOM",
   "EQUALS",
   "PLUS",
   "MINUS",
@@ -75,6 +78,7 @@ public class sym {
   "ASYMMETRIC",
   "DEFAULT",
   "BUT",
+  "EXACTLY",
   "LBRACKET",
   "RBRACKET",
   "IDENTIFIER",

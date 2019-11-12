@@ -1,4 +1,5 @@
 package ar.edu.itba.relif.parser;
+import ar.edu.itba.relif.util.*;
 import ar.edu.itba.relif.parser.ast.*;
 import ar.edu.itba.relif.parser.ast.operator.*;
 import java_cup.runtime.*;
@@ -7,7 +8,7 @@ import java.util.*;
 
 parser code {:
     static class ScopeBuilder {
-        int identities, symmetrics, asymmetrics;
+        Pair<Integer, Boolean> identities, symmetrics, asymmetrics;
         boolean doneId, doneSym, doneAsym;
 
         public ScopeBuilder() {
@@ -18,45 +19,45 @@ parser code {:
 
         public ScopeBuilder setDefaults(int i) {
             if(!doneId) {
-                identities = i;
+                identities = Pair.of(i, false);
             }
             if(!doneSym) {
-                  symmetrics = i;
+                  symmetrics = Pair.of(i, false);
             }
 
             if(!doneAsym) {
-                 asymmetrics = i;
+                 asymmetrics = Pair.of(i, false);
             }
             return this;
         }
-        public ScopeBuilder identities(int i) {
+        public ScopeBuilder identities(int i, boolean exactly) {
             if (doneId) { throw new IllegalStateException("Did id"); }
             doneId = true;
-            identities = i;
+            identities = Pair.of(i, exactly);
             return this;
         }
 
-        public ScopeBuilder symmetrics(int i) {
+        public ScopeBuilder symmetrics(int i, boolean exactly) {
                     if (doneSym) { throw new IllegalStateException("Did sym"); }
                     doneSym = true;
-                    symmetrics = i;
+                    symmetrics = Pair.of(i, exactly);
                     return this;
                 }
 
-        public ScopeBuilder asymmetrics(int i) {
+        public ScopeBuilder asymmetrics(int i, boolean exactly) {
                             if (doneAsym) { throw new IllegalStateException("Did asym"); }
                             doneAsym = true;
-                            asymmetrics = i;
+                            asymmetrics = Pair.of(i, exactly);
                             return this;
                         }
 
-        public ScopeBuilder set(int type, int i) {
+        public ScopeBuilder set(int type, int i, boolean exactly) {
             if (type == 0) {
-                 return identities(i);
+                 return identities(i, exactly);
             } else if (type == 1) {
-                return symmetrics(i);
+                return symmetrics(i, exactly);
             } else if (type == 2) {
-                return asymmetrics(i);
+                return asymmetrics(i, exactly);
             }
 
             throw new IllegalStateException("Unreachable");
@@ -70,6 +71,7 @@ parser code {:
 :}
 
 terminal    REL,
+            ATOM,
             EQUALS,
             PLUS,
             MINUS,
@@ -98,6 +100,7 @@ terminal    REL,
             ASYMMETRIC,
             DEFAULT,
             BUT,
+            EXACTLY,
             LBRACKET,
             RBRACKET;
 
@@ -143,8 +146,9 @@ line ::= decl:d {:  RESULT = d; :}
         ;
     
 
-decl ::= REL identifiers:is {: RESULT = new Declaration(is); :}
-     ;
+decl ::= REL identifiers:is {: RESULT = new Declaration(is, false);  :}
+        | ATOM identifiers:is {: RESULT = new Declaration(is, true); :}
+        ;
 
 identifiers ::= IDENTIFIER:i {: RESULT = new LinkedList<String>();
                                 RESULT.add(i); :}
@@ -157,7 +161,6 @@ identifiers ::= IDENTIFIER:i {: RESULT = new LinkedList<String>();
 
 
 fact ::=    formula:f {: RESULT = f; :}
-            | multiplicity_fact:f {: RESULT = f; :}
             ;
 
 
@@ -165,6 +168,7 @@ formula ::= rel_expr:l set_op:op rel_expr:r {: RESULT = new SetFormula(l,op,r); 
         | NOT formula:f {: RESULT = new NotFormula(f); :}
         | formula:l bin_logical_op:o formula:r {: RESULT = new BinaryFormula(l,o,r); :}
         | OPENPAREN formula:f CLOSEPAREN {: RESULT = f; :}
+        | multiplicity_fact:f {: RESULT = f; :}
         ;
 
 bin_logical_op ::=  AND         {: RESULT = BinaryLogicalOp.AND; :}
@@ -215,8 +219,10 @@ command_type ::= RUN {: RESULT = CommandType.RUN; :}
              ;
 
 
-scope ::= NUMBER:i scope_type:t {: RESULT = new ScopeBuilder().set(t,i); :}
-          | NUMBER:i scope_type:t COMMA scope:sb {: RESULT = sb.set(t,i); :}
+scope ::= NUMBER:i scope_type:t {: RESULT = new ScopeBuilder().set(t, i, false); :}
+          | EXACTLY NUMBER:i scope_type:t {: RESULT = new ScopeBuilder().set(t, i, true); :}
+          | NUMBER:i scope_type:t COMMA scope:sb {: RESULT = sb.set(t, i, false); :}
+          | EXACTLY NUMBER:i scope_type:t COMMA scope:sb {: RESULT = sb.set(t, i, true); :}
           ;
 
 scope_type ::= IDENTITY     {: RESULT = 0; :}

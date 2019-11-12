@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class RelifCodeArea extends CodeArea {
 
     private static final String[] KEYWORDS = new String[] {
-            "iden","univ","for", "rel",",", "=" ,"in" ,"\\+" ,"-" ,"\\." ,"~",
+            "iden","univ","for", "rel", "atom", ",", "=" ,"in" ,"\\+" ,"-" ,"\\." ,"~",
             "&" ,"no" ,"some" ,"!" ,"not" ,"&&" ,"and" ,"\\|\\|" ,
             "or" ,"=>","implies" ,"<=>" ,"iff" , "run" ,"check",
             "id" ,"sym" ,"asym" ,"but", "default"

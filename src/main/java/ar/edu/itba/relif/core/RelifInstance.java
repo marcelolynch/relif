@@ -2,6 +2,7 @@ package ar.edu.itba.relif.core;
 
 
 import ar.edu.itba.relif.parser.ast.Scope;
+import ar.edu.itba.relif.util.Pair;
 import kodkod.ast.Formula;
 import kodkod.ast.Relation;
 import kodkod.ast.Variable;
@@ -35,14 +36,17 @@ public class RelifInstance {
     private final TupleSet allAtomsTupleSet;
 
     public RelifInstance(Scope scope) {
-        int ids = scope.getIdentities();
-        int syms = scope.getSymmetrics();
-        int asyms = scope.getAsymmetrics();
+        Pair<Integer, Boolean> ids = scope.getIdentities();
+        Pair<Integer, Boolean> syms = scope.getSymmetrics();
+        Pair<Integer, Boolean> asyms = scope.getAsymmetrics();
 
-        asyms = 2 * (asyms/2); // Asymmetric atoms are even
-        identityAtoms = IntStream.range(0, ids).mapToObj(i -> "I" + i).collect(Collectors.toList());
-        asymmetricAtoms = IntStream.range(0, asyms).mapToObj(i -> "A" + i).collect(Collectors.toList());
-        symmetricAtoms = IntStream.range(0, syms).mapToObj(i -> "S" + i).collect(Collectors.toList());
+        if (!asyms.snd()) {
+            // We force the number of asymmetric atoms to be even
+            asyms = Pair.of(2 * (asyms.fst() / 2), asyms.snd());
+        }
+        identityAtoms = IntStream.range(0, ids.fst()).mapToObj(i -> "I" + i).collect(Collectors.toList());
+        asymmetricAtoms = IntStream.range(0, asyms.fst()).mapToObj(i -> "A" + i).collect(Collectors.toList());
+        symmetricAtoms = IntStream.range(0, syms.fst()).mapToObj(i -> "S" + i).collect(Collectors.toList());
         allAtoms = new ArrayList<>();
         allAtoms.addAll(identityAtoms);
         allAtoms.addAll(asymmetricAtoms);
@@ -54,22 +58,47 @@ public class RelifInstance {
         atoms = kodkod.ast.Relation.unary("At");
 
         // Bound the sets
-        // TODO: Bound exactly
         Universe universe = new Universe(allAtoms);
         bounds = new Bounds(universe);
         TupleFactory factory = universe.factory();
         allAtomsTupleSet = factory.setOf(allAtoms.toArray());
 
+        if (identityAtoms.isEmpty()) {
+            // With 0 identity atoms the problem will be UNSAT.
+            // Still, we don't fail.
+            bounds.bound(atoms, allAtomsTupleSet);
+        } else {
+            // The first identity atom is also on the lower bound for the atoms
+            bounds.bound(atoms, factory.setOf(identityAtoms.get(0)), allAtomsTupleSet);
+        }
 
-        // Set the lower bound with the first identity atom -- Id can't be empty,
-        // so we just force some identity atom to be in the relation (i.e., the first one)
-        bounds.bound(identity, factory.setOf(identityAtoms.get(0)), factory.setOf(identityAtoms.toArray()));
+        if (ids.snd()) {
+            bounds.boundExactly(identity, factory.setOf(identityAtoms.toArray()));
+        } else {
+            if (!identityAtoms.isEmpty()) {
+                // Set the lower bound with the first identity atom -- Id can't be empty,
+                // so we just force some identity atom to be in the relation (i.e., the first one)
+                bounds.bound(identity, factory.setOf(identityAtoms.get(0)), factory.setOf(identityAtoms.toArray()));
+            } else {
+                // With 0 identity atoms the problem will be UNSAT.
+                // Again, we don't fail.
+                bounds.bound(identity, factory.setOf(identityAtoms.toArray()));
+            }
+        }
 
-        bounds.bound(symmetric, factory.setOf(symmetricAtoms.toArray()));
-        bounds.bound(asymmetric, factory.setOf(asymmetricAtoms.toArray()));
+        if (syms.snd()) {
+            bounds.boundExactly(symmetric, factory.setOf(symmetricAtoms.toArray()));
+        } else {
+            bounds.bound(symmetric, factory.setOf(symmetricAtoms.toArray()));
+        }
 
-        // The first identity atom is also on the lower bound for the atoms
-        bounds.bound(atoms, factory.setOf(identityAtoms.get(0)),allAtomsTupleSet);
+        if (asyms.snd()) {
+            bounds.boundExactly(asymmetric, factory.setOf(asymmetricAtoms.toArray()));
+        } else {
+            bounds.bound(asymmetric, factory.setOf(asymmetricAtoms.toArray()));
+        }
+
+
 
         // Converse and cycles
         cycles = kodkod.ast.Relation.nary("cycles", 3);
@@ -98,7 +127,6 @@ public class RelifInstance {
 
     private TupleSet converseBounds(TupleFactory factory) {
         TupleSet converse_bound = factory.noneOf(2);
-
         // Expicitly name the converse of every atom in the upper bound
         // Identities and symmetric are its own converse
         for (String atom: identityAtoms) {
@@ -141,8 +169,9 @@ public class RelifInstance {
 
     private kodkod.ast.Formula universeRequirements() {
         // Sym + Ids + Asym = At
+        kodkod.ast.Formula nonEmptyIdentity = identity.some();
         kodkod.ast.Formula atomPartition = identity.union(symmetric).union(asymmetric).eq(atoms);
-        return atomPartition;
+        return nonEmptyIdentity.and(atomPartition);
     }
 
 

@@ -2,7 +2,7 @@ package ar.edu.itba.relif.core.iterator;
 
 import ar.edu.itba.relif.core.RelifSolution;
 import ar.edu.itba.relif.core.Representation;
-import javafx.util.Pair;
+import ar.edu.itba.relif.util.Pair;
 import kodkod.engine.Solution;
 import kodkod.instance.Instance;
 import kodkod.instance.Tuple;
@@ -47,7 +47,7 @@ public class RepresentationIterator implements Iterator<Representation> {
             String label = (String) t.atom(2);
 
             representationMap.putIfAbsent(label, new ArrayList<>());
-            representationMap.get(label).add(new Pair<>(first, second));
+            representationMap.get(label).add(Pair.of(first, second));
         }
 
 

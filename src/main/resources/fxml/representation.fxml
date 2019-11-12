@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ar.edu.itba.relif.application.controller.RepresentationWindowController">
@@ -11,7 +12,9 @@
     <left>
         <VBox>
             <HBox fx:id="controls"/>
-            <VBox fx:id="representations" prefHeight="200" />
+            <ScrollPane prefWidth="600" prefHeight="600">
+            <VBox fx:id="representations" />
+            </ScrollPane>
         </VBox>
     </left>
 </BorderPane>
