@@ -4,6 +4,7 @@ import ar.edu.itba.relif.parser.ast.*;
 import ar.edu.itba.relif.parser.ast.operator.*;
 import java_cup.runtime.*;
 import java.util.*;
+import java.util.Collections;
 
 
 parser code {:
@@ -128,13 +129,15 @@ non terminal Optional<Statement>        command_target;
 precedence left IFF, IMPLIES;
 precedence left OR;
 precedence left AND;
-
 precedence left PLUS, MINUS;
 precedence left INTERSECTION;
 precedence left COMPOSE;
 precedence left CONVERSE;
 
 spec ::= lines:ls command:c {: RESULT = new Specification(ls, c); :}
+        | lines:ls {: RESULT = new Specification(ls, Command.DEFAULT); :}
+        | command:c {: RESULT = new Specification(Collections.emptyList(), c); :}
+        | /* empty */ {: RESULT = new Specification(Collections.emptyList(), Command.DEFAULT );:}
         ;
 
 lines ::= line:l {: RESULT = new LinkedList<Statement>(); RESULT.add(l); :}

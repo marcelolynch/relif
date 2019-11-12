@@ -14,6 +14,8 @@ import java.util.Optional;
  * @see Scope
  */
 public class Command implements AstNode {
+    public final static Command DEFAULT = new Command(CommandType.RUN, Optional.empty(), Scope.DEFAULT);
+
     private final Scope scope;
 
     private CommandType type;
