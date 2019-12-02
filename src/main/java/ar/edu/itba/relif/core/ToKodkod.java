@@ -130,6 +130,7 @@ public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, Expression> {
         kodkod.ast.Expression inner = (Expression) unaryRelationExpr.getOperand().accept(this);
         switch (unaryRelationExpr.getOperator()) {
             case CONVERSE: return inner.join(instance.getConverse());
+            case UNARY_MINUS: return instance.getAtoms().difference(inner);
         }
 
         throw new IllegalStateException();
@@ -148,6 +149,8 @@ public class ToKodkod implements ReturnVisitor<kodkod.ast.Formula, Expression> {
         switch (setFormula.getOperator()) {
             case IN:    return left.in(right);
             case EQUALS: return left.eq(right);
+            case NOT_IN: return left.in(right).not();
+            case NOT_EQUALS: return left.eq(right).not();
         }
 
         throw new IllegalStateException();

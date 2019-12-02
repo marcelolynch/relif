@@ -38,10 +38,10 @@ class Scanner implements java_cup.runtime.Scanner {
   private static final String ZZ_CMAP_PACKED = 
     "\11\0\1\3\1\5\2\0\1\4\22\0\1\3\1\41\4\0\1\37"+
     "\1\0\1\21\1\22\1\7\1\33\1\31\1\34\1\35\1\6\12\1"+
-    "\2\0\1\45\1\32\1\43\2\0\32\2\6\0\1\26\1\52\1\46"+
-    "\1\11\1\12\1\16\1\2\1\47\1\10\1\2\1\50\1\25\1\30"+
-    "\1\13\1\17\1\44\1\2\1\20\1\40\1\27\1\14\1\15\1\2"+
-    "\1\53\1\51\1\2\1\23\1\42\1\24\1\36\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff91\0";
+    "\1\0\1\35\1\45\1\32\1\43\2\0\32\2\6\0\1\26\1\52"+
+    "\1\46\1\11\1\12\1\16\1\2\1\47\1\10\1\2\1\50\1\25"+
+    "\1\30\1\13\1\17\1\44\1\2\1\20\1\40\1\27\1\14\1\15"+
+    "\1\2\1\53\1\51\1\2\1\23\1\42\1\24\1\36\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff91\0";
 
   /** 
    * Translates characters to character classes
@@ -377,7 +377,7 @@ class Scanner implements java_cup.runtime.Scanner {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 148) {
+    while (i < 150) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);

@@ -181,7 +181,9 @@ bin_logical_op ::=  AND         {: RESULT = BinaryLogicalOp.AND; :}
                 ;
 
 set_op ::=   IN  {: RESULT = SetOperator.IN; :}
+            | NOT IN {: RESULT = SetOperator.NOT_IN; :}
             | EQUALS {: RESULT = SetOperator.EQUALS; :}
+            | NOT EQUALS {: RESULT = SetOperator.NOT_EQUALS; :}
             ;
 
 
@@ -200,6 +202,7 @@ rel_expr ::= IDEN                                       {: RESULT = Rel.IDEN; :}
             | rel_expr:r1 MINUS rel_expr:r2             {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.MINUS, r2); :}
             | rel_expr:r1 COMPOSE rel_expr:r2           {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.COMPOSE, r2); :}
             | rel_expr:r1 INTERSECTION rel_expr:r2      {: RESULT = new BinaryRelationExpr(r1, BinaryRelationOp.INTERSECTION, r2); :}
+            | MINUS rel_expr:r                          {: RESULT = new UnaryRelationExpr(UnaryRelationOp.UNARY_MINUS, r); :}
             | CONVERSE rel_expr:r                       {: RESULT = new UnaryRelationExpr(UnaryRelationOp.CONVERSE, r); :}
             | OPENPAREN rel_expr:r CLOSEPAREN           {: RESULT = r; :}
             ;
@@ -211,6 +214,7 @@ command ::= command_type:t command_target:ct {: RESULT = new Command(t, ct, Scop
             | command_type:t command_target:ct FOR NUMBER:i {: RESULT = new Command(t, ct, new ScopeBuilder().setDefaults(i).build()); :}
             | command_type:t command_target:ct FOR NUMBER:i BUT scope:sb {: RESULT = new Command(t, ct, sb.setDefaults(i).build()); :}
             | command_type:t command_target:ct FOR DEFAULT BUT scope:sb {: RESULT = new Command(t, ct, sb.build()); :}
+            | command_type:t command_target:ct FOR DEFAULT {: RESULT = new Command(t, ct, Scope.DEFAULT); :}
             ;
 
 command_target ::= LBRACKET fact:f RBRACKET {: RESULT = Optional.of(f); :}

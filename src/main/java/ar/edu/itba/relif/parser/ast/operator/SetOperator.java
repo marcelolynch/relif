@@ -5,7 +5,9 @@ package ar.edu.itba.relif.parser.ast.operator;
  */
 public enum SetOperator {
     IN("in"),
-    EQUALS("=");
+    EQUALS("="),
+    NOT_IN("not in"),
+    NOT_EQUALS("!=");
 
     private final String symbol;
 

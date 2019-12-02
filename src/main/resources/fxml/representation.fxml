@@ -12,8 +12,8 @@
     <left>
         <VBox>
             <HBox fx:id="controls"/>
-            <ScrollPane prefWidth="600" prefHeight="600">
-            <VBox fx:id="representations" />
+            <ScrollPane>
+            <VBox fx:id="representations" prefHeight="600" prefWidth="600" />
             </ScrollPane>
         </VBox>
     </left>

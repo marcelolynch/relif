@@ -57,6 +57,7 @@ end_of_line_comment = "//" {input_character}* {newline}?
 
 "+" { return symbol(yytext(), sym.PLUS); }
 "-" { return symbol(yytext(), sym.MINUS); }
+";" { return symbol(yytext(), sym.COMPOSE); }
 "." { return symbol(yytext(), sym.COMPOSE); }
 "~" { return symbol(yytext(), sym.CONVERSE); }
 "&" { return symbol(yytext(), sym.INTERSECTION); }
