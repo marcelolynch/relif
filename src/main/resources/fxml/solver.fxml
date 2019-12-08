@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ar.edu.itba.relif.application.controller.SolveWindowController">
@@ -17,9 +19,16 @@
         </MenuBar>
     </top>
     <left>
-    <VBox prefHeight="300" prefWidth="300" maxWidth="600">
-        <TableView fx:id="atomTable" />
-        <VBox fx:id="userRelations" />
-    </VBox>
+            <VBox spacing="20">
+                <BorderPane.margin>
+                    <Insets left="15.0" top="10.0" right="15.0" bottom="10.0" />
+                </BorderPane.margin>
+                <HBox spacing="30">
+                    <TableView fx:id="atomTable" prefWidth="200" />
+                    <TableView fx:id="converseTable" prefWidth="120"  />
+                </HBox>
+                <VBox fx:id="userRelations" />
+            </VBox>
     </left>
+
 </BorderPane>

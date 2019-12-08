@@ -1,6 +1,7 @@
 package ar.edu.itba.relif.application.controller;
 
 import ar.edu.itba.relif.application.view.CompositionValueFactory;
+import ar.edu.itba.relif.application.view.Title;
 import ar.edu.itba.relif.application.view.ViewLoader;
 import ar.edu.itba.relif.core.RelifSolution;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -20,15 +21,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.scene.control.TableView.UNCONSTRAINED_RESIZE_POLICY;
+
 public class SolveWindowController implements Controller {
 
     private static final String REPRESENTATION_WINDOW_FXML_PATH = "fxml/representation.fxml";
+
     @FXML
     public TableView atomTable;
 
     @FXML
-    public VBox userRelations;
+    public TableView converseTable;
 
+
+    @FXML
+    public VBox userRelations;
     private Stage stage;
     private Iterator<RelifSolution> solutions;
     private List<RelifSolution> history;
@@ -41,6 +48,13 @@ public class SolveWindowController implements Controller {
     @Override
     public void setStage(Stage stage) {
         this.stage = stage;
+        stage.getScene().getStylesheets()
+                .add(getClass().getClassLoader()
+                        .getResource("style/tables2.css").toExternalForm());
+        stage.setHeight(400);
+
+        atomTable.setColumnResizePolicy(UNCONSTRAINED_RESIZE_POLICY);
+        converseTable.setColumnResizePolicy(UNCONSTRAINED_RESIZE_POLICY);
     }
 
     public void doFindNext(ActionEvent actionEvent) {
@@ -60,6 +74,8 @@ public class SolveWindowController implements Controller {
     private void emptyTable() {
         atomTable.getColumns().clear();
         atomTable.getItems().clear();
+        converseTable.getColumns().clear();
+        converseTable.getItems().clear();
         userRelations.getChildren().clear();
         current = null;
     }
@@ -72,16 +88,25 @@ public class SolveWindowController implements Controller {
 
     private void updateView(RelifSolution rs) {
         emptyTable();
-        TableColumn<String, String> nameColumn = new TableColumn<>(" ; ");
+
+        atomTable.setPrefHeight(32 * (rs.getAtoms().size() + 1));
+        int tableLength = rs.getCycles().values().stream().mapToInt(m -> m.values().stream().mapToInt(l -> l.size() + 2).max().orElse(1)).sum();
+        System.out.println(tableLength);
+        atomTable.setPrefWidth(40 + 15 * tableLength);
+
+        converseTable.setPrefHeight(30 * (rs.getAtoms().size() + 1));
+
+        // Atom tble
+        TableColumn<String, String> nameColumn = new TableColumn<>(";");
         nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
+        nameColumn.getStyleClass().add("name-column");
+        nameColumn.setSortable(false);
         atomTable.getColumns().add(nameColumn);
 
         List<String> sortedAtoms = new ArrayList<>();
         sortedAtoms.addAll(rs.getIdentities());
         sortedAtoms.addAll(rs.getSymmetrics());
         sortedAtoms.addAll(rs.getAsymmetrics());
-
-        rs.getAtoms().forEach(System.out::print);
 
         for (String atom: sortedAtoms) {
             TableColumn<String, String> col = new TableColumn<>(atom);
@@ -94,30 +119,52 @@ public class SolveWindowController implements Controller {
             atomTable.getItems().add(atom);
         }
 
-        Text title = new Text("Relations: ");
-        title.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 13));
-        userRelations.getChildren().add(title);
+        atomTable.refresh();
 
 
-        for(Map.Entry<String, List<String>> e : rs.getUserRelations().entrySet()) {
-            Text text = new Text(userRelation(e.getKey(), e.getValue()));
-            text.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+
+        // Converse table
+        TableColumn<String, String> atomColumn = new TableColumn<>("Atom");
+        atomColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
+        atomColumn.setSortable(false);
+
+        TableColumn<String, String> converseColumn = new TableColumn<>("Converse");
+        converseColumn.getStyleClass().add("converse-table");
+        converseColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(rs.getConverse().getOrDefault(p.getValue(), "")));
+        converseColumn.setSortable(false);
+
+        converseTable.getColumns().add(atomColumn);
+        converseTable.getColumns().add(converseColumn);
+        converseTable.getItems().addAll(sortedAtoms);
+
+        converseTable.refresh();
+
+        if (!rs.getUserRelations().isEmpty()) {
+            Text title = new Title("User defined relations: ");
+            userRelations.getChildren().add(title);
             userRelations.getChildren().add(new Text("   "));
-            userRelations.getChildren().add(text);
-            userRelations.getChildren().add(new Text("   "));
+            for (Map.Entry<String, List<String>> e : rs.getUserRelations().entrySet()) {
+                Text text = new Text(userRelationToText(e.getKey(), e.getValue()));
+                text.setFont(Font.font("Lucida Console", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+                userRelations.getChildren().add(text);
+            }
         }
-
         current = rs;
     }
 
-    private String userRelation(String key, List<String> value) {
-        StringBuilder sb = new StringBuilder(key);
-        sb.append(" = { ");
-        for(String c: value) {
-            sb.append(c);
-            sb.append(" ");
+    private String userRelationToText(String name, List<String> atoms) {
+        StringBuilder sb = new StringBuilder(name);
+        sb.append(" =  ");
+
+        for (int i = 0; i < atoms.size() - 1; i++) {
+            sb.append(atoms.get(i));
+            sb.append(" + ");
         }
-        sb.append('}');
+
+        if (atoms.size() > 0) {
+            sb.append(atoms.get(atoms.size() - 1));
+        }
+
         return sb.toString();
     }
 

@@ -18,7 +18,7 @@ public class RelifCodeArea extends CodeArea {
             "iden","univ","for", "rel", "atom", ",", "=" ,"in" ,"\\+" ,"-" ,"\\." ,"~",
             "&" ,"no" ,"some" ,"!" ,"not" ,"&&" ,"and" ,"\\|\\|" ,
             "or" ,"=>","implies" ,"<=>" ,"iff" , "run" ,"check",
-            "id" ,"sym" ,"asym" ,"but", "default"
+            "id" ,"sym" ,"asym" ,"but", "default", "exactly"
     };
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";

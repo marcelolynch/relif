@@ -72,6 +72,8 @@ public class RelifInstance {
             bounds.bound(atoms, factory.setOf(identityAtoms.get(0)), allAtomsTupleSet);
         }
 
+        // The boolean in the second of the pair
+        // indicates that the bound is exact
         if (ids.snd()) {
             bounds.boundExactly(identity, factory.setOf(identityAtoms.toArray()));
         } else {

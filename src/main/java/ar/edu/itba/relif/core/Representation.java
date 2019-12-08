@@ -3,6 +3,7 @@ import ar.edu.itba.relif.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Representation {
 
@@ -30,13 +31,22 @@ public class Representation {
                 allPairsInRelation.addAll(representationMap.get(atomInRelation));
             }
 
-            result.add(new Pair<>(e.getKey(), allPairsInRelation));
+            result.add(Pair.of(e.getKey(), allPairsInRelation));
         }
 
         return result;
     }
 
-    public List<Pair<String, String>> getBackingSet() {
+    public List<String> getBackingSet() {
+        Set<String> backingSet = new HashSet<>();
+        for (List<Pair<String,String>> l: representationMap.values()) {
+            backingSet.addAll(l.stream().flatMap(p -> Stream.of(p.fst(), p.snd())).collect(Collectors.toList()) );
+        }
+
+        return backingSet.stream().sorted().collect(Collectors.toList());
+    }
+
+    public List<Pair<String, String>> getUnit() {
         Set<Pair<String, String>> pairs = new HashSet<>();
         for (List<Pair<String,String>> l: representationMap.values()) {
             pairs.addAll(l);

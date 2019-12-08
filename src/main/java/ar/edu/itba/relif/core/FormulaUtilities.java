@@ -24,7 +24,7 @@ public class FormulaUtilities {
 
     /**
      *  Given a ternary relation r, returns a formula expressing
-      * that r : dom x dom -> codom is a partial function
+     *  that r : dom x dom -> codom is a partial function
      */
     public static Formula ternaryRelationIsPartialFunction(Relation r, Relation dom, Relation codom) {
         Variable x1 = Variable.unary("x1");

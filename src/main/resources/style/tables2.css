@@ -1,0 +1,42 @@
+.table-view .column-header,
+.table-view .column-header-background .filler {
+    -fx-background-color: #8c8b8b;
+    -fx-border-width: 0.1em;
+    -fx-font-weight: bold;
+
+}
+
+.table-view .column-header .label{
+    -fx-text-fill: #e3e3e3;
+    -fx-font-size: 1.2em;
+}
+
+
+.table-view .cell{
+    -fx-border-width: 0.05em;
+    -fx-alignment: center;
+    -fx-background-color: lightgray;
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #3d3d3d;
+}
+
+
+.table-view .cell:odd{
+    -fx-border-width: 0.05em;
+    -fx-alignment: center;
+    -fx-background-color: #e4e4e4;
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #3d3d3d;
+}
+
+
+.table-view .name-column,
+.table-view .name-column:odd
+{
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em;
+    -fx-text-fill: #e3e3e3;
+    -fx-border-width: 0.1em;
+    -fx-background-color: #8c8b8b;
+}
+

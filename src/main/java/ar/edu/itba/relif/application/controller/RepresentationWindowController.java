@@ -1,6 +1,7 @@
 package ar.edu.itba.relif.application.controller;
 
 import ar.edu.itba.relif.application.view.NumericField;
+import ar.edu.itba.relif.application.view.Title;
 import ar.edu.itba.relif.core.RelifSolution;
 import ar.edu.itba.relif.core.Representation;
 import ar.edu.itba.relif.core.RepresentationFinder;
@@ -26,45 +27,75 @@ public class RepresentationWindowController implements Controller {
     private Stage stage;
     private RelifSolution solution;
 
+    private Iterator<Representation> current = null;
+    private Button findNextButton;
+
     public RepresentationWindowController() {}
 
 
     private void tryFind(int bound) {
         representations.getChildren().clear();
-        RepresentationFinder finder = new RepresentationFinder(solution, bound);
-        Iterator<Representation> all = finder.findAll();
+        representations.getChildren().add(new Text("Searching..."));
 
-        if(!all.hasNext()) {
-            System.out.println("No solution");
+        RepresentationFinder finder = new RepresentationFinder(solution, bound);
+        current = finder.findAll();
+        tryFindNext();
+    }
+
+    private void tryFindNext() {
+        representations.getChildren().clear();
+        representations.getChildren().add(new Text("Searching..."));
+
+        if (current == null || !current.hasNext()) {
+            representations.getChildren().clear();
+            representations.getChildren().add(new Text("No solution"));
+            findNextButton.setDisable(true);
+            return;
         }
 
-        while(all.hasNext()) {
-            Representation next = all.next();
+        representations.getChildren().clear();
+        findNextButton.setDisable(false);
+        Representation next = current.next();
 
-            representations.getChildren().add(new Text("===== REPRESENTATION: ========"));
-            representations.getChildren().add(new Text("===== BASE SET ========"));
-            representations.getChildren().add(new Text(reprToText("Univ =", next.getBackingSet())));
-            System.out.println(reprToText("X", next.getBackingSet()));
-            representations.getChildren().add(new Text("===== ATOMS ========"));
-            for(Pair<String, List<Pair<String, String>>> e: next.getAtoms()) {
+        representations.getChildren().add(new Title("Base set:"));
+
+        representations.getChildren().add(new Text(setToText("X", next.getBackingSet())));
+        representations.getChildren().add(new Text(reprToText("Unit", next.getUnit())));
+
+        representations.getChildren().add(new Text("\n"));
+        representations.getChildren().add(new Title("Atoms:"));
+        for (Pair<String, List<Pair<String, String>>> e : next.getAtoms()) {
+            representations.getChildren().add(new Text(reprToText(e.fst(), e.snd())));
+        }
+
+        representations.getChildren().add(new Text("\n"));
+
+        if (!next.getUserDefinedRelations().isEmpty()) {
+            representations.getChildren().add(new Title("User defined relations:"));
+
+            for (Pair<String, List<Pair<String, String>>> e : next.getUserDefinedRelations()) {
                 representations.getChildren().add(new Text(reprToText(e.fst(), e.snd())));
-                System.out.println(reprToText(e.fst(), e.snd()));
             }
-            System.out.println("=========================================");
-
-            representations.getChildren().add(new Text("===== USER DEFINED RELATIONS ========"));
-
-            for(Pair<String, List<Pair<String, String>>> e: next.getUserDefinedRelations()) {
-                representations.getChildren().add(new Text(reprToText(e.fst(), e.snd())));
-            }
-
         }
     }
+
+
+    private String setToText(String name, List<String> set) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        sb.append(" = { ");
+        for(String e: set) {
+            sb.append(e);
+            sb.append(" ");
+        }
+        sb.append("}");
+
+        return sb.toString();    }
 
     private String reprToText(String name, List<Pair<String, String>> values) {
         StringBuilder sb = new StringBuilder();
         sb.append(name);
-        sb.append(" = {");
+        sb.append(" = { ");
         for(Pair<String, String> p: values) {
             sb.append("(");
             sb.append(p.fst());
@@ -85,15 +116,23 @@ public class RepresentationWindowController implements Controller {
 
         numericField.promptTextProperty().setValue("Maximum number of elements in the backing set");
 
-        Button findButton = new Button(" Find");
 
         controls.getChildren().add(new Text("Bound: "));
         controls.getChildren().add(numericField);
+
+        Button findButton = new Button("Find");
         controls.getChildren().add(findButton);
+
+        findNextButton = new Button("Find next");
+        findNextButton.setDisable(true);
+        controls.getChildren().add(findNextButton);
+
 
         findButton.setOnAction(e -> {
             tryFind(numericField.getIntValue());
         });
+
+        findNextButton.setOnAction(e -> tryFindNext());
     }
 
 
