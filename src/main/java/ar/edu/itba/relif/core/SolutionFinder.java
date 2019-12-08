@@ -23,8 +23,6 @@ public class SolutionFinder {
         solver.options().setIntEncoding(Options.IntEncoding.TWOSCOMPLEMENT);
         solver.options().setSymmetryBreaking(50);
         solver.options().setSkolemDepth(0);
-        System.out.println("Solving...");
-        System.out.flush();
 
 
         Iterator<Solution> sol = solver.solveAll(rif.getRequirements().and(specification), rif.getBounds());

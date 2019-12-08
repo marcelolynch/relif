@@ -41,7 +41,6 @@ public class RepresentationIterator implements Iterator<Representation> {
         Map<String, List<Pair<String, String>>> representationMap = new HashMap<>();
 
         for(Tuple t: labelling) {
-            System.out.println(t);
             String first = (String) t.atom(0);
             String second  = (String) t.atom(1);
             String label = (String) t.atom(2);

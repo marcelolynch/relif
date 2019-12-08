@@ -91,7 +91,6 @@ public class SolveWindowController implements Controller {
 
         atomTable.setPrefHeight(32 * (rs.getAtoms().size() + 1));
         int tableLength = rs.getCycles().values().stream().mapToInt(m -> m.values().stream().mapToInt(l -> l.size() + 2).max().orElse(1)).sum();
-        System.out.println(tableLength);
         atomTable.setPrefWidth(40 + 15 * tableLength);
 
         converseTable.setPrefHeight(30 * (rs.getAtoms().size() + 1));

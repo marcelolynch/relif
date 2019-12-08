@@ -77,16 +77,11 @@ public class Main {
         solver.options().setIntEncoding(Options.IntEncoding.TWOSCOMPLEMENT);
         solver.options().setSymmetryBreaking(50);
         solver.options().setSkolemDepth(0);
-        System.out.println("Solving...");
-        System.out.flush();
 
 
         Iterator<Solution> sol = solver.solveAll(rif.getRequirements().and(specification), rif.getBounds());
         while (sol.hasNext()) {
             Solution s = sol.next();
-            System.out.println(s.toString());
-
-            System.out.println("=================================================");
         }
     }
 
@@ -98,16 +93,11 @@ public class Main {
         solver.options().setIntEncoding(Options.IntEncoding.TWOSCOMPLEMENT);
         solver.options().setSymmetryBreaking(50);
         solver.options().setSkolemDepth(0);
-        System.out.println("Solving...");
-        System.out.flush();
 
 
         Iterator<Solution> sol = solver.solveAll(rf.getFormula(), rf.getBounds());
         while (sol.hasNext()) {
             Solution s = sol.next();
-            System.out.println(s.toString());
-
-            System.out.println("=================================================");
         }
     }
 
@@ -122,8 +112,6 @@ public class Main {
         solver.options().setIntEncoding(Options.IntEncoding.TWOSCOMPLEMENT);
         solver.options().setSymmetryBreaking(50);
         solver.options().setSkolemDepth(0);
-        System.out.println("Solving...");
-        System.out.flush();
 
 
         Iterator<Solution> sol = solver.solveAll(rif.getRequirements().and(specification), rif.getBounds());
