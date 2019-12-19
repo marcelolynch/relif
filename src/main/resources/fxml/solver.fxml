@@ -11,12 +11,10 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ar.edu.itba.relif.application.controller.SolveWindowController">
     <top>
-        <MenuBar>
-            <Menu text="Actions">
-                <MenuItem text="Find next solution" onAction="#doFindNext"/>
-                <MenuItem text="Find representation" onAction="#doFindRepresentation"/>
-            </Menu>
-        </MenuBar>
+        <ToolBar>
+                <Button text="Next solution" fx:id="nextSolutionButton" onAction="#doFindNext"/>
+                <Button text="Find representation" fx:id="findRepresentationButton" onAction="#doFindRepresentation"/>
+        </ToolBar>
     </top>
     <left>
             <VBox spacing="20">
@@ -27,7 +25,11 @@
                     <TableView fx:id="atomTable" prefWidth="200" />
                     <TableView fx:id="converseTable" prefWidth="120"  />
                 </HBox>
-                <VBox fx:id="userRelations" />
+                <VBox fx:id="userRelations">
+                    <VBox.margin>
+                        <Insets left="15.0" top="10.0" right="15.0" bottom="10.0" />
+                    </VBox.margin>
+                </VBox>
             </VBox>
     </left>
 

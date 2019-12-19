@@ -7,7 +7,9 @@ import ar.edu.itba.relif.core.RelifSolution;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
@@ -36,6 +38,13 @@ public class SolveWindowController implements Controller {
 
     @FXML
     public VBox userRelations;
+
+    @FXML
+    public Button nextSolutionButton;
+
+    @FXML
+    public Button findRepresentationButton;
+
     private Stage stage;
     private Iterator<RelifSolution> solutions;
     private List<RelifSolution> history;
@@ -67,7 +76,13 @@ public class SolveWindowController implements Controller {
             history.add(next);
             updateView(next);
         } else {
-            emptyTable();
+            findRepresentationButton.setDisable(true);
+            nextSolutionButton.setDisable(true);
+            atomTable.setVisible(false);
+            converseTable.setVisible(false);
+            userRelations.getChildren().clear();
+            userRelations.getChildren().add(new Text("(No more solutions with these bounds)"));
+            userRelations.setAlignment(Pos.CENTER);
         }
     }
 
